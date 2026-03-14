@@ -14,7 +14,8 @@ const CertificateScreen = () => {
 
     const proxyImage = (url) => {
         if (!url || url.includes('dicebear')) return url;
-        return `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
+        // Используем встроенный прокси, чтобы обойти CORS при канвасировании и избежать блокировок wsrv.nl
+        return `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
     };
 
     const handleShare = async () => {
