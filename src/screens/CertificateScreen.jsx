@@ -40,18 +40,19 @@ const CertificateScreen = () => {
 
         try {
             // 1. Находим все картинки внутри сертификата
-            const imgs = certificateRef.current.querySelectorAll('img');
+            const imgs = certificateRef.current.querySelectorAll('img[data-export="avatar"]');
             const originalSrcs = [];
 
             // 2. Временно меняем src на base64, чтобы обойти Canvas Taint
             for (let i = 0; i < imgs.length; i++) {
                 originalSrcs.push(imgs[i].src);
-                imgs[i].src = await getBase64Image(imgs[i].src);
-                imgs[i].crossOrigin = 'anonymous'; // Убеждаемся
+                // Запрашиваем base64 через прокси, чтобы fetch не упал от CORS
+                const proxyUrl = proxyImage(imgs[i].src);
+                imgs[i].src = await getBase64Image(proxyUrl);
             }
 
             // Ждем чуть-чуть, чтобы DOM обновился
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             const dataUrl = await toPng(certificateRef.current, {
                 cacheBust: true,
@@ -146,7 +147,7 @@ const CertificateScreen = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }}>
                         <div style={{ position: 'relative' }}>
                             <div style={{ width: '64px', height: '64px', borderRadius: '22px', border: '2px solid var(--accent-neon)', overflow: 'hidden', padding: '2px', background: 'rgba(0,0,0,0.3)' }}>
-                                <img crossOrigin="anonymous" src={proxyImage(user.avatar)} style={{ width: '100%', height: '100%', borderRadius: '18px', objectFit: 'cover' }} />
+                                <img data-export="avatar" src={user.avatar} style={{ width: '100%', height: '100%', borderRadius: '18px', objectFit: 'cover' }} />
                             </div>
                             <div style={{ position: 'absolute', top: -3, left: -3, width: '10px', height: '10px', background: 'var(--accent-neon)', borderRadius: '50%', boxShadow: '0 0 10px var(--accent-neon)' }} />
                         </div>
@@ -160,7 +161,7 @@ const CertificateScreen = () => {
 
                         <div style={{ position: 'relative' }}>
                             <div style={{ width: '64px', height: '64px', borderRadius: '22px', border: '2px solid var(--accent-hot)', overflow: 'hidden', padding: '2px', background: 'rgba(0,0,0,0.3)' }}>
-                                <img crossOrigin="anonymous" src={proxyImage(weddingData.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${weddingData.partner}`)} style={{ width: '100%', height: '100%', borderRadius: '18px', objectFit: 'cover' }} />
+                                <img data-export="avatar" src={weddingData.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${weddingData.partner}`} style={{ width: '100%', height: '100%', borderRadius: '18px', objectFit: 'cover' }} />
                             </div>
                             <div style={{ position: 'absolute', top: -3, right: -3, width: '10px', height: '10px', background: 'var(--accent-hot)', borderRadius: '50%', boxShadow: '0 0 10px var(--accent-hot)' }} />
                         </div>
