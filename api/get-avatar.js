@@ -2,8 +2,8 @@
 // Синхронизировано с эталонным get-avatar.js пользователя
 // Адаптировано под текущую базу (profiles) и переменные окружения
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || ''
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_ANON_KEY || ''
+const SUPABASE_URL = 'https://lkqkszpmsajqmzjgsien.supabase.co'
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrcWtzenBtc2FqcW16amdzaWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NDM5NjIsImV4cCI6MjA4OTAxOTk2Mn0.xRuPrJKcuH9qazBD4n8ThhY27HmmvHPBLlewuRt3_3s'
 const CACHE_TTL_HOURS = 24
 
 // =============================================

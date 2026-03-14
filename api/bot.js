@@ -8,17 +8,12 @@ const BOT_TOKEN = '8612737038:AAFMUDR3hFoF1O6JzWOBmY_f5GhjeOH_bgw';
 
 export default async function handler(req, res) {
     try {
-        const supabaseUrl = process.env.VITE_SUPABASE_URL;
-        const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+        // Хардкодим переменные, чтобы всё работало "из коробки" (по просьбе пользователя)
+        const supabaseUrl = 'https://lkqkszpmsajqmzjgsien.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrcWtzenBtc2FqcW16amdzaWVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NDM5NjIsImV4cCI6MjA4OTAxOTk2Mn0.xRuPrJKcuH9qazBD4n8ThhY27HmmvHPBLlewuRt3_3s';
 
         if (!supabaseUrl || !supabaseKey) {
-            console.error('[Bot] Supabase env variables are missing');
-            if (req.method === 'GET') {
-                return res.status(200).json({
-                    error: 'Environment variables missing',
-                    details: 'Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to Vercel settings.'
-                });
-            }
+            // Это условие теперь фактически невыполнимо, но оставим для структуры
             return res.status(500).json({ error: 'Config missing' });
         }
 
