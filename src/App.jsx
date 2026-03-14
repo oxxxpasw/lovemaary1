@@ -64,13 +64,18 @@ function AppContent() {
     const tg = window.Telegram?.WebApp;
 
     if (tg) {
-      tg.ready();
-      tg.expand();
-      if (tg.requestFullscreen) tg.requestFullscreen();
-      if (tg.disableVerticalSwipe) tg.disableVerticalSwipe();
-      tg.setHeaderColor('#050508');
-      tg.setBackgroundColor('#050508');
-      setViewportHeight(tg.viewportHeight + 'px');
+      try {
+        tg.ready();
+        tg.expand();
+        if (tg.requestFullscreen) tg.requestFullscreen();
+        if (tg.disableVerticalSwipe) tg.disableVerticalSwipe();
+        tg.setHeaderColor('#050508');
+        tg.setBackgroundColor('#050508');
+        setViewportHeight((tg.viewportHeight || window.innerHeight) + 'px');
+      } catch (err) {
+        console.warn('Telegram WebApp error:', err);
+        setViewportHeight(window.innerHeight + 'px');
+      }
     }
 
     const handleResize = () => {
@@ -122,8 +127,8 @@ function AppContent() {
 
       {showNavbar && (
         <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
+          initial={{ y: 100, x: '-50%' }}
+          animate={{ y: 0, x: '-50%' }}
           className="nav-island"
         >
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="feed" Icon={Globe} />

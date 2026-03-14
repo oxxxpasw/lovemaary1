@@ -136,17 +136,17 @@ const SettingsScreen = () => {
                         position: 'relative',
                         overflow: 'hidden',
                         display: 'grid',
-                        gridTemplateColumns: '70px 1fr auto',
+                        gridTemplateColumns: 'clamp(50px, 15vw, 64px) 1fr auto',
                         alignItems: 'center',
-                        gap: '15px'
+                        gap: '12px'
                     }}
                 >
-                    <div style={{ position: 'absolute', right: '-10px', top: '-10px', opacity: 0.03, color: 'var(--accent-neon)', pointerEvents: 'none' }}>
-                        <User size={100} />
+                    <div style={{ position: 'absolute', right: '-5px', top: '-5px', opacity: 0.03, color: 'var(--accent-neon)', pointerEvents: 'none' }}>
+                        <User size={80} />
                     </div>
 
                     <div style={{
-                        width: '70px', height: '70px', borderRadius: '20px',
+                        width: 'clamp(50px, 15vw, 64px)', height: 'clamp(50px, 15vw, 64px)', borderRadius: '18px',
                         border: '2px solid rgba(0, 242, 255, 0.3)', padding: '2px',
                         background: '#000', position: 'relative', zIndex: 2
                     }}>

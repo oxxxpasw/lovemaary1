@@ -99,25 +99,25 @@ const FeedScreen = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
-                                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', minWidth: 0 }}>
                                     <motion.div
-                                        whileHover={{ scale: 1.05, rotate: -3 }}
+                                        whileTap={{ scale: 0.9 }}
                                         onClick={() => openPassport(item.partners[0])}
-                                        style={{ width: '72px', height: '72px', borderRadius: '24px', border: '2.5px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer', background: '#000', padding: '1.5px', boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)' }}
+                                        style={{ width: 'clamp(56px, 16vw, 68px)', height: 'clamp(56px, 16vw, 68px)', borderRadius: '20px', border: '2.5px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer', background: '#000', padding: '1.5px', boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)', flexShrink: 0 }}
                                     >
-                                        <img src={item.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '21px' }} alt="Avatar A" />
+                                        <img src={item.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '17px' }} alt="Avatar A" />
                                     </motion.div>
-                                    <div style={{ fontSize: '1.5rem', fontWeight: '300', color: 'rgba(255,255,255,0.2)' }}>&</div>
+                                    <div style={{ fontSize: '1.2rem', fontWeight: '300', color: 'rgba(255,255,255,0.2)', flexShrink: 0 }}>&</div>
                                     <motion.div
-                                        whileHover={{ scale: 1.05, rotate: 3 }}
+                                        whileTap={{ scale: 0.9 }}
                                         onClick={() => openPassport(item.partners[1])}
-                                        style={{ width: '72px', height: '72px', borderRadius: '24px', border: '2.5px solid var(--accent-hot)', overflow: 'hidden', cursor: 'pointer', background: '#000', padding: '1.5px', boxShadow: '0 0 20px rgba(255, 45, 85, 0.3)' }}
+                                        style={{ width: 'clamp(56px, 16vw, 68px)', height: 'clamp(56px, 16vw, 68px)', borderRadius: '20px', border: '2.5px solid var(--accent-hot)', overflow: 'hidden', cursor: 'pointer', background: '#000', padding: '1.5px', boxShadow: '0 0 15px rgba(255, 45, 85, 0.2)', flexShrink: 0 }}
                                     >
-                                        <img src={item.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '21px' }} alt="Avatar B" />
+                                        <img src={item.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '17px' }} alt="Avatar B" />
                                     </motion.div>
                                 </div>
                                 <div style={{ textAlign: 'right', background: 'rgba(0, 242, 255, 0.05)', padding: '10px 15px', borderRadius: '18px', border: '1px solid rgba(0, 242, 255, 0.1)' }}>
-                                    <span style={{ fontSize: '0.6rem', fontWeight: '900', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.2em', display: 'block', marginBottom: '4px' }}>Established</span>
+                                    <span style={{ fontSize: '0.6rem', fontWeight: '900', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.2em', display: 'block', marginBottom: '4px' }}>Создан</span>
                                     <span style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.05em' }}>{item.date}</span>
                                 </div>
                             </div>
@@ -138,10 +138,10 @@ const FeedScreen = () => {
                                     </h3>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
                                         <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'var(--accent-neon)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                            {item.style} Edition
+                                            {item.style} издание
                                         </span>
                                         <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
-                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Verified Union</span>
+                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Официальный союз</span>
                                     </div>
                                 </div>
                             </div>

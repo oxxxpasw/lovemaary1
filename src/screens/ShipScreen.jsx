@@ -139,9 +139,9 @@ const ShipScreen = () => {
                             <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr auto', alignItems: 'center', gap: '15px', position: 'relative', zIndex: 2 }}>
                                 {/* Rank */}
                                 <div style={{
-                                    fontSize: '1.2rem', fontWeight: '900',
+                                    fontSize: 'clamp(0.9rem, 4vw, 1.1rem)', fontWeight: '900',
                                     color: index < 3 ? 'var(--accent-neon)' : 'rgba(255,255,255,0.3)',
-                                    width: '45px', height: '45px', borderRadius: '50%',
+                                    width: 'clamp(36px, 10vw, 42px)', height: 'clamp(36px, 10vw, 42px)', borderRadius: '50%',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     background: index < 3 ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255,255,255,0.03)',
                                     border: `1px solid ${index < 3 ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255,255,255,0.05)'}`,
@@ -151,14 +151,14 @@ const ShipScreen = () => {
                                 </div>
 
                                 {/* Content */}
-                                <div style={{ minWidth: 0 }}>
-                                    <div className="truncate-text" style={{ fontWeight: '900', fontSize: '1.2rem', color: 'white', letterSpacing: '-0.02em' }}>
+                                <div style={{ minWidth: 0, flex: 1 }}>
+                                    <div className="truncate-text" style={{ fontWeight: '900', fontSize: 'clamp(1rem, 5vw, 1.2rem)', color: 'white', letterSpacing: '-0.02em' }}>
                                         @{ship.partner_a} <span style={{ opacity: 0.3, fontWeight: '400' }}>&</span> @{ship.partner_b}
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)', flexShrink: 0 }} />
-                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                            {ship.wedding_style || 'Cyber Union'}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                                        <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'var(--accent-neon)', flexShrink: 0 }} />
+                                        <span className="truncate-text" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                            {ship.wedding_style || 'Кибер-союз'}
                                         </span>
                                     </div>
                                 </div>

@@ -48,8 +48,8 @@ const ChapelScreen = () => {
                         >
                             <Sparkles size={40} color="var(--accent-neon)" />
                         </motion.div>
-                        <h1 style={{ fontSize: '0.8rem', letterSpacing: '0.6em', color: 'rgba(255,255,255,0.4)', fontWeight: '900', textTransform: 'uppercase', marginBottom: '1rem' }}>Initiating Connection</h1>
-                        <h2 className="glow-text" style={{ fontSize: '3.5rem', fontWeight: '900', letterSpacing: '-0.04em' }}>ЧАСОВНЯ</h2>
+                        <h1 style={{ fontSize: '0.65rem', letterSpacing: '0.4em', color: 'rgba(255,255,255,0.4)', fontWeight: '900', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Initiating Connection</h1>
+                        <h2 className="glow-text" style={{ fontSize: 'clamp(2rem, 10vw, 3rem)', fontWeight: '900', letterSpacing: '-0.04em' }}>ЧАСОВНЯ</h2>
                     </motion.div>
                 )}
 
@@ -62,7 +62,7 @@ const ChapelScreen = () => {
                         style={{ textAlign: 'center', width: '100%', padding: '2rem', zIndex: 1 }}
                     >
                         {/* Avatar Display - Premium Neon Case */}
-                        <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 3rem' }}>
+                        <div style={{ position: 'relative', width: 'clamp(160px, 50vw, 200px)', height: 'clamp(160px, 50vw, 200px)', margin: '0 auto 2rem' }}>
                             <motion.div
                                 animate={{ boxShadow: ['0 0 40px rgba(0, 242, 255, 0.2)', '0 0 80px rgba(0, 242, 255, 0.4)', '0 0 40px rgba(0, 242, 255, 0.2)'] }}
                                 transition={{ duration: 3, repeat: Infinity }}
@@ -95,11 +95,11 @@ const ChapelScreen = () => {
                             />
                         </div>
 
-                        <h2 className="glow-text" style={{ marginBottom: '1rem', fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+                        <h2 className="glow-text" style={{ marginBottom: '1rem', fontSize: 'clamp(1.5rem, 6vw, 2rem)', fontWeight: '900', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
                             Принять союз с <br />
-                            <span style={{ background: 'var(--grad-neon)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>@{activeWedding?.partner}</span>
+                            <span className="truncate-text" style={{ background: 'var(--grad-neon)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block', maxWidth: '100%' }}>@{activeWedding?.partner}</span>
                         </h2>
-                        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '3.5rem', fontSize: '1rem', fontWeight: '600' }}>Сквозь цифровую пустоту рождается новая связь.</p>
+                        <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '2.5rem', fontSize: '0.9rem', fontWeight: '600' }}>Сквозь цифровую пустоту рождается новая связь.</p>
 
                         <motion.button
                             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 242, 255, 0.5)' }}
@@ -110,10 +110,10 @@ const ChapelScreen = () => {
                                 setTimeout(() => setStage('result'), 4000);
                             }}
                             style={{
-                                width: '280px',
-                                height: '70px',
-                                fontSize: '1.2rem',
-                                borderRadius: '25px',
+                                width: '260px',
+                                height: '64px',
+                                fontSize: '1.1rem',
+                                borderRadius: '22px',
                                 background: 'var(--grad-neon)',
                                 color: 'black',
                                 border: 'none',

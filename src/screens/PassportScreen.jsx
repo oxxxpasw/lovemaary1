@@ -201,13 +201,13 @@ const PassportScreen = () => {
                             <div style={{ fontSize: '0.75rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.1em', opacity: 0.8 }}>{passportId}</div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: '20px', position: 'relative', zIndex: 2 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'clamp(80px, 25vw, 100px) 1fr', gap: '15px', position: 'relative', zIndex: 2 }}>
                             {/* Avatar Column */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
                                 <motion.div
-                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     style={{
-                                        width: '100px', height: '100px', borderRadius: '28px', overflow: 'hidden',
+                                        width: 'clamp(80px, 25vw, 100px)', height: 'clamp(80px, 25vw, 100px)', borderRadius: '24px', overflow: 'hidden',
                                         border: '2px solid rgba(0, 242, 255, 0.4)', padding: '2px', background: '#000'
                                     }}
                                 >

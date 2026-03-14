@@ -37,72 +37,89 @@ const Dashboard = () => {
             <div className="hero-glow-secondary" />
 
             {/* Elegant Header with larger avatar and badge */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', position: 'relative', zIndex: 10 }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--accent-neon)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '4px', opacity: 0.8 }}>Privileged User</span>
-                    <h1 className="text-gradient glow-text" style={{ fontSize: '2.8rem', fontWeight: '900', letterSpacing: '-0.05em', lineHeight: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', position: 'relative', zIndex: 10 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-neon)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', opacity: 0.8 }}>Элитный статус</span>
+                    <h1 className="text-gradient truncate-text" style={{ fontSize: 'clamp(1.8rem, 7vw, 2.4rem)', fontWeight: '900', letterSpacing: '-0.04em', lineHeight: 1 }}>
                         @{user.handle}
                     </h1>
                 </div>
                 <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
                     style={{
-                        position: 'relative',
-                        padding: '4px',
+                        position: 'relative', flexShrink: 0,
+                        padding: '3px',
                         background: 'linear-gradient(135deg, var(--accent-neon), var(--accent-hot))',
-                        borderRadius: '24px',
-                        boxShadow: '0 0 30px rgba(0, 242, 255, 0.4)'
+                        borderRadius: '20px',
+                        boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)'
                     }}
                 >
-                    <div style={{ width: '68px', height: '68px', borderRadius: '21px', overflow: 'hidden', background: '#000', padding: '1.5px' }}>
-                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
+                    <div style={{ width: '56px', height: '56px', borderRadius: '17px', overflow: 'hidden', background: '#000', padding: '1px' }}>
+                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
                     </div>
                 </motion.div>
             </div>
 
             {/* Futuristic Central Hub */}
             <motion.div
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -4 }}
                 className="glass-panel"
                 style={{
-                    padding: '3rem 2rem',
-                    marginBottom: '3rem',
+                    padding: '2rem 1.5rem',
+                    marginBottom: '2.5rem',
                     textAlign: 'center',
                     position: 'relative',
                     overflow: 'hidden',
-                    border: '1.5px solid rgba(0, 242, 255, 0.3)',
+                    border: '1.5px solid rgba(0, 242, 255, 0.25)',
                     background: 'linear-gradient(135deg, rgba(0, 242, 255, 0.05) 0%, rgba(5, 10, 15, 0.95) 100%)',
-                    borderRadius: '40px',
-                    boxShadow: '0 30px 60px rgba(0, 242, 255, 0.1)'
+                    borderRadius: '32px',
+                    boxShadow: '0 20px 40px rgba(0, 242, 255, 0.1)'
                 }}
             >
-                <div style={{ position: 'absolute', top: '-20%', right: '-15%', opacity: 0.05, color: 'var(--accent-neon)' }}>
-                    <Heart size={250} fill="currentColor" />
+                <div style={{ position: 'absolute', top: '-10%', right: '-10%', opacity: 0.05, color: 'var(--accent-neon)', pointerEvents: 'none' }}>
+                    <Heart size={200} fill="currentColor" />
                 </div>
 
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '8px 20px', borderRadius: '30px', background: 'rgba(0, 242, 255, 0.1)', border: '1px solid rgba(0, 242, 255, 0.3)', marginBottom: '2.5rem' }}>
-                        <div className="animate-pulse" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 15px var(--accent-neon)' }} />
-                        <span style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '0.3em', color: 'var(--accent-neon)', textTransform: 'uppercase' }}>Status Verified</span>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '20px', background: 'rgba(0, 242, 255, 0.08)', border: '1px solid rgba(0, 242, 255, 0.2)', marginBottom: '1.5rem' }}>
+                        <div className="animate-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
+                        <span style={{ fontSize: '0.65rem', fontWeight: '900', letterSpacing: '0.2em', color: 'var(--accent-neon)', textTransform: 'uppercase' }}>Верифицирован</span>
                     </div>
 
-                    <h2 className="glow-text" style={{ fontSize: '3.5rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.05em', lineHeight: 0.85 }}>
+                    <h2 className="glow-text" style={{
+                        fontSize: 'clamp(1.5rem, 8vw, 2.4rem)',
+                        fontWeight: '900',
+                        marginBottom: '1rem',
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.1,
+                        wordBreak: 'break-word',
+                        padding: '0 10px'
+                    }}>
                         {user.status || 'Свободен'}
                     </h2>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '1.5rem' }}>
-                        <div style={{ height: '1px', width: '30px', background: 'rgba(255,255,255,0.1)' }} />
-                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '1rem' }}>
+                        <div style={{ height: '1px', width: '20px', background: 'rgba(255,255,255,0.1)' }} />
+                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {user.role}
                         </p>
-                        <div style={{ height: '1px', width: '30px', background: 'rgba(255,255,255,0.1)' }} />
+                        <div style={{ height: '1px', width: '20px', background: 'rgba(255,255,255,0.1)' }} />
                     </div>
                 </div>
             </motion.div>
 
             {/* Role Evolution Slider */}
-            <div style={{ marginBottom: '2.5rem' }}>
-                <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '10px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div style={{ marginBottom: '2.5rem', width: '100%', overflow: 'hidden' }}>
+                <div style={{
+                    display: 'flex',
+                    gap: '10px',
+                    overflowX: 'auto',
+                    padding: '5px 0 15px',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    WebkitOverflowScrolling: 'touch',
+                    width: '100%'
+                }}>
                     {roles.map(role => (
                         <button
                             key={role}

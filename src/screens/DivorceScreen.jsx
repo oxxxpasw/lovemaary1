@@ -57,13 +57,13 @@ const DivorceScreen = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             className="screen certificate"
-            style={{ paddingTop: '85px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', display: 'flex', flexDirection: 'column' }}
+            style={{ paddingTop: '100px', paddingBottom: '7rem', paddingLeft: '1.2rem', paddingRight: '1.2rem', display: 'flex', flexDirection: 'column' }}
         >
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#ff2d55', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
+                <h1 style={{ fontSize: 'clamp(1.4rem, 6vw, 1.8rem)', fontWeight: '900', color: '#ff2d55', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Свобода
                 </h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Ваш цифровой союз расторгнут.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Ваш цифровой союз расторгнут.</p>
             </div>
 
             {/* Экспортируемая зона */}
@@ -72,15 +72,15 @@ const DivorceScreen = () => {
                 style={{
                     position: 'relative',
                     background: '#050508',
-                    padding: '2.5rem 1.5rem',
+                    padding: '1.5rem 1rem',
                     border: '1px solid rgba(255, 45, 85, 0.4)',
                     borderRadius: '24px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     overflow: 'hidden',
-                    boxShadow: '0 20px 50px rgba(255, 45, 85, 0.15)',
-                    marginBottom: '2rem'
+                    boxShadow: '0 15px 40px rgba(255, 45, 85, 0.12)',
+                    marginBottom: '1.5rem'
                 }}
             >
                 {/* Фоновый шум/глитч (имитация) */}
