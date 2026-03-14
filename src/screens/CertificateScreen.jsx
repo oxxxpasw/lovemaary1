@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, Sparkles, Download, Loader2, ShieldCheck, ChevronLeft } from 'lucide-react';
+import { Heart, Sparkles, Download, Loader2, ShieldCheck, ChevronLeft, Check } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import download from 'downloadjs';
 
@@ -9,6 +9,7 @@ const CertificateScreen = () => {
     const { user, activeWedding, setCurrentScreen, marriages, ensureSafeAvatar } = useApp();
     const certificateRef = useRef(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [isShared, setIsShared] = useState(false);
 
     const weddingData = activeWedding || (marriages.length > 0 ? marriages[0] : null);
 
@@ -34,7 +35,7 @@ const CertificateScreen = () => {
                     const el = clonedDoc.querySelector('[data-certificate-container]');
                     if (el) {
                         el.style.width = '600px';
-                        el.style.padding = '4rem 3rem';
+                        el.style.padding = '5rem 4rem';
                         el.style.borderRadius = '60px';
                     }
                 }
@@ -53,11 +54,14 @@ const CertificateScreen = () => {
                         title: 'Threads Bond',
                         text: `Official digital union verified via https://t.me/marrythreadsbot`
                     });
+                    setIsShared(true);
                 } catch (shareErr) {
                     download(dataUrl, `threads-marriage-certificate.png`);
+                    setIsShared(true);
                 }
             } else {
                 download(dataUrl, `threads-marriage-certificate.png`);
+                setIsShared(true);
             }
         } catch (err) {
             console.error('Export failed', err);
@@ -105,7 +109,7 @@ const CertificateScreen = () => {
                 <ChevronLeft size={20} />
             </motion.button>
 
-            {/* PREVIEW CONTAINER (Scaled for mobile) */}
+            {/* ART PIECE */}
             <div ref={certificateRef} style={{
                 width: '100%',
                 padding: '10px 15px',
@@ -121,94 +125,79 @@ const CertificateScreen = () => {
                         maxWidth: '360px',
                         background: '#000',
                         borderRadius: '45px',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        border: '1px solid rgba(0, 242, 255, 0.3)',
                         position: 'relative',
                         overflow: 'hidden',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        padding: '2rem 1.5rem 1.5rem',
+                        padding: '2.5rem 1.5rem 2rem',
                         boxShadow: '0 30px 60px rgba(0,0,0,0.8)'
                     }}
                 >
                     {/* Background Decor */}
                     <div style={{ position: 'absolute', inset: 0, opacity: 0.2, pointerEvents: 'none' }}>
-                        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <rect width="100%" height="100%" fill="radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.1), transparent)" />
-                        </svg>
+                        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.1), transparent)' }} />
                     </div>
 
-                    {/* SHIMMER */}
-                    <motion.div
-                        animate={{ left: ['-150%', '300%'] }}
-                        transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
-                        style={{ position: 'absolute', top: 0, width: '100%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent)', transform: 'skewX(-30deg)', pointerEvents: 'none' }}
-                    />
+                    <Heart size={36} color="var(--accent-neon)" fill="rgba(0, 242, 255, 0.1)" style={{ marginBottom: '1.5rem', zIndex: 2 }} />
 
                     {/* Header */}
-                    <div style={{ textAlign: 'center', marginBottom: '1.5rem', zIndex: 2 }}>
-                        <div style={{ fontSize: '0.55rem', letterSpacing: '0.5em', fontWeight: '900', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem', zIndex: 2 }}>
+                        <div style={{ fontSize: '0.55rem', letterSpacing: '0.4em', fontWeight: '900', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '8px' }}>
                             Permanent Digital Bond
                         </div>
-                        <h1 style={{ fontSize: '2.4rem', fontWeight: '900', color: 'white', margin: 0, letterSpacing: '-0.02em', fontStyle: 'italic' }}>CERTIFICATE</h1>
-                        <div style={{ width: '40px', height: '2px', background: 'var(--accent-neon)', margin: '10px auto 0' }} />
+                        <h1 style={{ fontSize: '2.2rem', fontWeight: '900', color: 'white', margin: 0, letterSpacing: '-0.02em', fontStyle: 'italic' }}>CERTIFICATE</h1>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.2em', marginTop: '10px' }}>ID: {weddingData.id?.toString().toUpperCase()}</div>
                     </div>
 
                     {/* AVATARS */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: '2rem', zIndex: 2 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: '2.5rem', zIndex: 2 }}>
                         <div style={{ position: 'relative' }}>
-                            <div style={{ width: '85px', height: '85px', borderRadius: '32px', background: '#111', border: '1px solid rgba(255,255,255,0.15)', padding: '5px' }}>
-                                <img crossOrigin="anonymous" src={proxyImage(user.avatar)} style={{ width: '100%', height: '100%', borderRadius: '27px', objectFit: 'cover' }} />
+                            <div style={{ width: '85px', height: '85px', borderRadius: '32px', border: '2px solid var(--accent-neon)', overflow: 'hidden', padding: '1px' }}>
+                                <img crossOrigin="anonymous" src={proxyImage(user.avatar)} style={{ width: '100%', height: '100%', borderRadius: '30px', objectFit: 'cover' }} />
                             </div>
-                            <div style={{ position: 'absolute', top: '-8px', left: '-8px', background: 'white', color: 'black', padding: '4px 8px', borderRadius: '8px', fontSize: '0.55rem', fontWeight: '900' }}>@YOU</div>
+                            <div style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', background: 'white', color: 'black', padding: '4px 10px', borderRadius: '8px', fontSize: '0.5rem', fontWeight: '900' }}>@YOU</div>
                         </div>
 
-                        <div style={{ margin: '0 -10px', zIndex: 3, width: '36px', height: '36px', background: '#000', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <Heart size={18} fill="var(--accent-hot)" color="var(--accent-hot)" />
-                        </div>
+                        <div style={{ width: '30px', height: '2px', background: 'rgba(255,255,255,0.1)', margin: '0 10px' }} />
 
                         <div style={{ position: 'relative' }}>
-                            <div style={{ width: '85px', height: '85px', borderRadius: '32px', background: '#111', border: '1px solid rgba(255,255,255,0.15)', padding: '5px' }}>
-                                <img crossOrigin="anonymous" src={proxyImage(weddingData.partnerAvatar)} style={{ width: '100%', height: '100%', borderRadius: '27px', objectFit: 'cover' }} />
+                            <div style={{ width: '85px', height: '85px', borderRadius: '32px', border: '2px solid var(--accent-hot)', overflow: 'hidden', padding: '1px' }}>
+                                <img crossOrigin="anonymous" src={proxyImage(weddingData.partnerAvatar)} style={{ width: '100%', height: '100%', borderRadius: '30px', objectFit: 'cover' }} />
                             </div>
-                            <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--accent-neon)', color: 'black', padding: '4px 8px', borderRadius: '8px', fontSize: '0.55rem', fontWeight: '900' }}>@LOVE</div>
+                            <div style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', background: 'var(--accent-neon)', color: 'black', padding: '4px 10px', borderRadius: '8px', fontSize: '0.5rem', fontWeight: '900' }}>@LOVE</div>
                         </div>
                     </div>
 
                     {/* Proclamation */}
                     <div style={{ textAlign: 'center', zIndex: 2, width: '100%' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', marginBottom: '2rem' }}>
-                            <h2 style={{ fontSize: '1.6rem', color: 'white', fontWeight: '900', margin: 0 }}>@{user.handle}</h2>
-                            <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', fontWeight: '900', letterSpacing: '0.3em' }}>UNITED WITH</div>
-                            <h2 style={{ fontSize: '1.6rem', color: 'var(--accent-neon)', fontWeight: '900', margin: 0 }}>@{weddingData.partner}</h2>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '8px' }}>ОФИЦИАЛЬНЫЙ СОЮЗ</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: '900', color: 'white', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
+                            @{user.handle} & @{weddingData.partner}
                         </div>
 
                         <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
+                            padding: '12px 20px',
                             borderTop: '1px solid rgba(255,255,255,0.06)',
-                            paddingTop: '1.5rem',
-                            gap: '30px'
+                            borderBottom: '1px solid rgba(255,255,255,0.06)',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            gap: '20px'
                         }}>
-                            <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '4px' }}>Date Stamp</div>
-                                <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '800' }}>{weddingData.date}</div>
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '4px' }}>Date</div>
+                                <div style={{ fontSize: '0.8rem', color: 'white', fontWeight: '800' }}>{weddingData.date}</div>
                             </div>
-                            <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '4px' }}>Protocol</div>
-                                <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <ShieldCheck size={12} color="var(--accent-neon)" /> VERIFIED
-                                </div>
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '4px' }}>Status</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--accent-neon)', fontWeight: '800' }}>VERIFIED</div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Footer ID */}
-                    <div style={{ marginTop: 'auto', width: '100%', opacity: 0.2, zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '2rem' }}>
-                        <div style={{ fontSize: '0.5rem', fontFamily: 'monospace' }}>#{weddingData.id?.toString().toUpperCase()}</div>
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                            {[1, 2, 3].map(i => <div key={i} style={{ width: '3px', height: '3px', background: 'white', borderRadius: '50%' }} />)}
-                        </div>
+                    <div style={{ position: 'absolute', bottom: '15px', fontSize: '0.5rem', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', zIndex: 2 }}>
+                        MARRYTHREADS.APP
                     </div>
                 </div>
             </div>
@@ -222,23 +211,20 @@ const CertificateScreen = () => {
                     onClick={handleShare}
                     style={{
                         height: '62px', borderRadius: '22px',
-                        background: 'white', color: 'black',
+                        background: isShared ? 'rgba(255,255,255,0.1)' : 'white',
+                        color: isShared ? 'white' : 'black',
                         fontSize: '1rem', fontWeight: '900',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                        boxShadow: '0 10px 20px rgba(255,255,255,0.1)'
+                        boxShadow: isShared ? 'none' : '0 10px 20px rgba(255,255,255,0.1)'
                     }}
                 >
-                    {isExporting ? <Loader2 className="animate-spin" /> : (
-                        <>
-                            <Download size={20} /> ПОДЕЛИТЬСЯ СОЮЗОМ
-                        </>
-                    )}
+                    {isExporting ? <Loader2 className="animate-spin" /> :
+                        isShared ? <><Check size={24} color="#10b981" /> СОХРАНЕНО</> :
+                            <>
+                                <Download size={20} /> ПОДЕЛИТЬСЯ СОЮЗОМ
+                            </>
+                    }
                 </motion.button>
-
-                <p style={{ textAlign: 'center', fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', fontWeight: '600', lineHeight: 1.3 }}>
-                    На iPhone откроется системное меню.<br />
-                    На ПК начнется загрузка файла.
-                </p>
 
                 <motion.button
                     whileTap={{ scale: 0.95 }}

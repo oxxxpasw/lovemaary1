@@ -33,20 +33,6 @@ const SettingsScreen = () => {
         loadSettings();
     }, [user]);
 
-    // Сохраняем telegram_id при первом входе через TG
-    useEffect(() => {
-        const tg = window.Telegram?.WebApp;
-        if (tg && user) {
-            const tgUser = tg.initDataUnsafe?.user;
-            if (tgUser?.id) {
-                supabase
-                    .from('profiles')
-                    .update({ telegram_id: tgUser.id })
-                    .eq('handle', user.handle)
-                    .then(() => setTelegramConnected(true));
-            }
-        }
-    }, [user]);
 
     const toggleNotifyProposals = async () => {
         const newVal = !notifyProposals;
@@ -217,12 +203,32 @@ const SettingsScreen = () => {
                             <Toggle value={notifyMarriages} onToggle={toggleNotifyMarriages} />
                         </div>
 
-                        {!telegramConnected && (
-                            <div style={{ padding: '12px 15px', borderRadius: '15px', background: 'rgba(255, 45, 85, 0.05)', margin: '5px', border: '1px solid rgba(255,45,85,0.1)' }}>
+                        {!telegramConnected ? (
+                            <div style={{ padding: '15px', borderRadius: '15px', background: 'rgba(0, 242, 255, 0.05)', margin: '5px', border: '1px solid rgba(0, 242, 255, 0.1)' }}>
+                                <div style={{ marginBottom: '12px' }}>
+                                    <div style={{ fontWeight: '800', fontSize: '0.9rem', color: 'var(--accent-neon)', marginBottom: '4px' }}>Бот не подключен</div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                                        Подключите нашего бота, чтобы получать мгновенные уведомления о предложениях и свадьбах.
+                                    </div>
+                                </div>
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => window.open(`https://t.me/ThreadsMarryBot?start=${user.handle}`, '_blank')}
+                                    style={{
+                                        width: '100%', padding: '12px', borderRadius: '12px',
+                                        background: 'var(--accent-neon)', color: 'black', border: 'none',
+                                        fontSize: '0.85rem', fontWeight: '900', cursor: 'pointer'
+                                    }}
+                                >
+                                    ПОДКЛЮЧИТЬ БОТА
+                                </motion.button>
+                            </div>
+                        ) : (
+                            <div style={{ padding: '12px 15px', borderRadius: '15px', background: 'rgba(16, 185, 129, 0.05)', margin: '5px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <BellOff size={16} color="var(--accent-hot)" />
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                        Откройте приложение через Telegram для активации уведомлений
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+                                    <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '800' }}>
+                                        Telegram Bot подключен
                                     </span>
                                 </div>
                             </div>

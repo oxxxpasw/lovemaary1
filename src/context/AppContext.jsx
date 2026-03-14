@@ -28,6 +28,35 @@ export const AppProvider = ({ children }) => {
         return `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
     };
 
+    const sendTGNotification = async (targetHandle, message) => {
+        try {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('telegram_id, notify_proposals, notify_marriages')
+                .ilike('handle', targetHandle)
+                .maybeSingle();
+
+            if (profile?.telegram_id) {
+                const wantsProposals = profile.notify_proposals !== false;
+                const wantsMarriages = profile.notify_marriages !== false;
+
+                const isProposal = message.includes('предложение') || message.includes('Proposal');
+                if ((isProposal && !wantsProposals) || (!isProposal && !wantsMarriages)) return;
+
+                await fetch('/api/notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: profile.telegram_id,
+                        message: message
+                    })
+                });
+            }
+        } catch (err) {
+            // Error hidden
+        }
+    };
+
     // 1. Начальная загрузка и восстановление сессии
     useEffect(() => {
         const savedHandle = localStorage.getItem('marrythreads_handle');
@@ -49,8 +78,6 @@ export const AppProvider = ({ children }) => {
             .maybeSingle();
 
         if (error) {
-            console.error('[Supabase] Ошибка восстановления сессии (406?):', error);
-            if (error.message) console.error('Детали:', error.message);
             setCurrentScreen('auth');
             return;
         }
@@ -408,6 +435,9 @@ export const AppProvider = ({ children }) => {
                     ring_id: activeWedding.ringId || 'basic'
                 }, ...marriages]);
 
+                // Уведомляем партнёра в TG
+                notifyMarriage(activeWedding.partner, user.handle);
+
                 setUser(prev => ({
                     ...prev,
                     status: newStatus,
@@ -511,6 +541,24 @@ export const AppProvider = ({ children }) => {
 
         return { success: true };
     };
+
+    // 5. Автоматическая синхронизация Telegram ID
+    useEffect(() => {
+        const tg = window.Telegram?.WebApp;
+        if (tg && user && !user.telegram_id) {
+            const tgUser = tg.initDataUnsafe?.user;
+            if (tgUser?.id) {
+                console.log('[TG Sync] Auto-linking telegram_id:', tgUser.id);
+                supabase
+                    .from('profiles')
+                    .update({ telegram_id: tgUser.id })
+                    .ilike('handle', user.handle)
+                    .then(() => {
+                        setUser(prev => ({ ...prev, telegram_id: tgUser.id }));
+                    });
+            }
+        }
+    }, [user]);
 
     return (
         <AppContext.Provider value={{

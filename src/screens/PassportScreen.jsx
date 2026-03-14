@@ -162,56 +162,77 @@ const PassportScreen = () => {
                 </div>
             ) : (
                 <>
-                    {/* The Digital Card - Luxury Neon Edition */}
+                    {/* The Digital Card - Classic Federation Style */}
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         className="passport-card"
                         style={{
-                            padding: '2.5rem 1.5rem',
+                            padding: '1.8rem 1.5rem',
                             marginBottom: '2.5rem',
-                            borderRadius: '35px',
-                            border: '1px solid rgba(0, 242, 255, 0.3)',
-                            boxShadow: '0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 242, 255, 0.05)',
+                            borderRadius: '30px',
+                            background: 'rgba(5, 10, 15, 0.8)',
+                            border: '1px solid rgba(0, 242, 255, 0.2)',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
                             position: 'relative',
                             overflow: 'hidden'
                         }}
                     >
-                        <div className="passport-pattern" style={{ opacity: 0.1, backgroundImage: 'radial-gradient(var(--accent-neon) 1px, transparent 1px)', backgroundSize: '15px 15px' }} />
-                        <div className="passport-seal" style={{ borderColor: 'var(--accent-neon)', position: 'absolute', bottom: '-20px', right: '-20px', width: '150px', height: '150px', border: '2px dashed', opacity: 0.1, borderRadius: '50%', transform: 'rotate(-15deg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900', color: 'var(--accent-neon)' }}>MARRYTHREADS</div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
-                            <div style={{ padding: '6px 16px', borderRadius: '15px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                <span style={{ fontSize: '0.65rem', fontWeight: '800', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)' }}>DIGITAL PASSPORT</span>
-                            </div>
-                            <span style={{ fontSize: '0.7rem', fontWeight: '700', opacity: 0.5, fontFamily: 'monospace' }}>{passportId}</span>
+                        {/* Background Heart Decoration */}
+                        <div style={{ position: 'absolute', right: '-20px', bottom: '-10px', opacity: 0.1, pointerEvents: 'none' }}>
+                            <Heart size={160} color="var(--accent-neon)" strokeWidth={1} />
                         </div>
 
-                        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', position: 'relative', zIndex: 2 }}>
-                            <div className="passport-glitch" style={{ position: 'relative' }}>
+                        {/* Top Header Row */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 10px var(--accent-neon)' }} />
+                                <span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>THREADS FEDERATION</span>
+                            </div>
+                            <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{passportId}</span>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '25px', position: 'relative', zIndex: 2 }}>
+                            {/* Avatar Column */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
                                 <div style={{
-                                    width: '100px', height: '100px', borderRadius: '25px', overflow: 'hidden',
-                                    border: '2px solid var(--accent-neon)', boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)'
+                                    width: '110px', height: '110px', borderRadius: '30px', overflow: 'hidden',
+                                    border: '2px solid var(--accent-neon)', padding: '2px', background: 'black'
                                 }}>
-                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '26px' }} />
                                 </div>
-                                <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', background: 'var(--accent-neon)', color: 'black', fontSize: '0.6rem', fontWeight: '900', padding: '4px 10px', borderRadius: '10px', boxShadow: '0 5px 10px rgba(0, 242, 255, 0.4)' }}>
+                                <div style={{
+                                    background: 'var(--accent-neon)', color: 'black',
+                                    fontSize: '0.65rem', fontWeight: '900', padding: '5px 15px',
+                                    borderRadius: '8px', boxShadow: '0 5px 15px rgba(0, 242, 255, 0.3)',
+                                    textTransform: 'uppercase', letterSpacing: '0.05em'
+                                }}>
                                     VERIFIED
                                 </div>
                             </div>
 
-                            <div style={{ flex: 1 }}>
-                                <h3 className="glow-text" style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-                                    @{viewedUser.handle}
-                                </h3>
-                                <div style={{ display: 'flex', gap: '15px', marginTop: '12px' }}>
+                            {/* Info Column */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <div>
+                                    <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>NAME / НИКНЕЙМ</p>
+                                    <h3 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white', margin: 0 }}>
+                                        @{viewedUser.handle}
+                                    </h3>
+                                </div>
+
+                                <div>
+                                    <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>STATUS / СТАТУС</p>
+                                    <p style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--accent-neon)', margin: 0 }}>{viewedUser.status || 'Active'}</p>
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '30px' }}>
                                     <div>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</p>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--accent-neon)' }}>{viewedUser.status || 'Active'}</p>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>UNIONS / СОЮЗЫ</p>
+                                        <p style={{ fontSize: '1.2rem', fontWeight: '900', color: 'white', margin: 0 }}>{viewedMarriages.length}</p>
                                     </div>
                                     <div>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Unions</p>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: '800', color: 'white' }}>{viewedMarriages.length}</p>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>EXP / СРОК</p>
+                                        <p style={{ fontSize: '0.9rem', fontWeight: '800', color: 'white', margin: 0 }}>FOREVER</p>
                                     </div>
                                 </div>
                             </div>
@@ -296,8 +317,9 @@ const PassportScreen = () => {
                         <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={() => {
-                                navigator.clipboard.writeText(`https://marrythreads.app/passport/${user.handle}`);
-                                alert('Ссылка на ваш паспорт скопирована!');
+                                const shareUrl = `https://t.me/ThreadsMarryBot?start=${user.handle}`;
+                                navigator.clipboard.writeText(shareUrl);
+                                alert('Ссылка на ваш паспорт скопирована! Отправьте её друзьям в Threads или Telegram.');
                             }}
                             className="btn-primary"
                             style={{ width: '100%', height: '60px', borderRadius: '20px', marginTop: '2.5rem', background: 'var(--grad-neon)' }}

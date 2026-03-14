@@ -17,8 +17,8 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'telegram_id and message are required' });
     }
 
-    // Бот-токен — вставь свой сюда или через env
-    const BOT_TOKEN = process.env.TG_BOT_TOKEN || 'YOUR_BOT_TOKEN';
+    // Бот-токен
+    const BOT_TOKEN = '8612737038:AAFMUDR3hFoF1O6JzWOBmY_f5GhjeOH_bgw';
 
     try {
         const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {

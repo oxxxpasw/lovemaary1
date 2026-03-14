@@ -12,7 +12,7 @@ export const sendNotification = async (handle, message) => {
         const { data: profile } = await supabase
             .from('profiles')
             .select('telegram_id, notify_proposals, notify_marriages')
-            .eq('handle', handle)
+            .ilike('handle', handle)
             .maybeSingle();
 
         if (!profile?.telegram_id) {
@@ -45,7 +45,7 @@ export const notifyProposal = async (toHandle, fromHandle) => {
     const { data } = await supabase
         .from('profiles')
         .select('notify_proposals')
-        .eq('handle', toHandle)
+        .ilike('handle', toHandle)
         .maybeSingle();
 
     if (data?.notify_proposals === false) return;
@@ -61,7 +61,7 @@ export const notifyMarriage = async (partnerHandle, yourHandle) => {
     const { data } = await supabase
         .from('profiles')
         .select('notify_marriages')
-        .eq('handle', partnerHandle)
+        .ilike('handle', partnerHandle)
         .maybeSingle();
 
     if (data?.notify_marriages === false) return;
