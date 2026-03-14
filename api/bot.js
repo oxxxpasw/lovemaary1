@@ -18,24 +18,44 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Bot token not configured' });
     }
 
-    // 2. Авто-настройка вебхука через GET запрос
+    // 2. Авто-настройкa вебхука через GET запрос + Диагностика
     if (req.method === 'GET') {
         const protocol = req.headers['x-forwarded-proto'] || 'https';
         const host = req.headers.host;
-        const webhookUrl = `${protocol}://${host}/api/bot`;
+        const queryUrl = req.query?.url; // Позволяем ручную установку через ?url=...
+        const webhookUrl = queryUrl || `${protocol}://${host}/api/bot`;
 
         try {
-            console.log(`[Bot Setup] Registering webhook: ${webhookUrl}`);
+            console.log(`[Bot Setup] Target webhook: ${webhookUrl}`);
+
+            // Проверка токена (getMe)
+            const botInfoRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`);
+            const botInfo = await botInfoRes.json();
+
+            if (!botInfo.ok) {
+                return res.status(200).json({
+                    error: 'Invalid Bot Token',
+                    details: botInfo.description
+                });
+            }
+
+            // Установка вебхука
             const setupRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${webhookUrl}`);
             const setupData = await setupRes.json();
 
+            // Текущий статус
+            const statusRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getWebhookInfo`);
+            const statusData = await statusRes.json();
+
             return res.status(200).json({
-                message: 'Webhook setup attempt finished',
-                webhook: webhookUrl,
-                telegram_response: setupData
+                success: setupData.ok,
+                message: setupData.ok ? 'Webhook successfully configured!' : 'Webhook setup failed',
+                bot_name: botInfo.result.first_name,
+                webhook_url: webhookUrl,
+                status: statusData.result
             });
         } catch (err) {
-            return res.status(500).json({ error: 'Setup failed', details: err.message });
+            return res.status(500).json({ error: 'Setup Exception', details: err.message });
         }
     }
 

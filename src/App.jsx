@@ -64,10 +64,11 @@ function AppContent() {
     // Авто-настройка вебхука при запуске (только один раз)
     const setupBot = async () => {
       try {
-        await fetch('/api/bot');
-        console.log('[Bot Setup] Auto-ping sent');
+        const res = await fetch('/api/bot');
+        const data = await res.json();
+        console.log('[Bot Setup] Auto-ping response:', data);
       } catch (err) {
-        console.warn('[Bot Setup] Auto-ping failed (expected in local dev):', err);
+        console.warn('[Bot Setup] Auto-ping failed. If you see 404, check your deployment:', err);
       }
     };
     setupBot();

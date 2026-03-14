@@ -13,37 +13,45 @@ function vercelApiMock() {
       Object.assign(process.env, envVars);
     },
     configureServer(server) {
-      server.middlewares.use('/api/get-avatar', async (req, res, next) => {
+      server.middlewares.use('/api', async (req, res, next) => {
         try {
-          // Динамический импорт обработчика, чтобы всегда видеть свежий код
-          const handlerModule = await server.ssrLoadModule('/api/get-avatar.js')
-          const apiHandler = handlerModule.default
-
           const parsedUrl = new URL(req.originalUrl || req.url, `http://${req.headers.host || 'localhost'}`)
+          const apiName = parsedUrl.pathname.split('/').pop()
 
-          // Эмулируем req.query
+          if (!apiName) return next()
+
+          // Динамический импорт обработчика
+          const handlerPath = `/api/${apiName}.js`
+          let apiHandler;
+          try {
+            const handlerModule = await server.ssrLoadModule(handlerPath)
+            apiHandler = handlerModule.default
+          } catch (e) {
+            console.warn(`[API Mock] Route ${handlerPath} not found, skipping...`);
+            return next();
+          }
+
+          // Эмулируем req.query и req.body (минимально)
           req.query = Object.fromEntries(parsedUrl.searchParams.entries())
 
+          // Для POST запросов в Vite нужно считать body вручную, если нет плагинов
+          if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => body += chunk);
+            await new Promise(resolve => req.on('end', resolve));
+            try { req.body = JSON.parse(body); } catch (e) { req.body = body; }
+          }
+
           // Эмулируем методы Vercel ServerResponse
-          res.status = (code) => {
-            res.statusCode = code
-            return res
-          }
+          res.status = (code) => { res.statusCode = code; return res; }
           res.json = (data) => {
-            res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify(data))
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data));
           }
-          res.send = (data) => {
-            res.end(data)
-          }
+          res.send = (data) => { res.end(data); }
           res.redirect = (code, url) => {
-            if (typeof code === 'string') {
-              url = code;
-              code = 302;
-            }
-            res.statusCode = code
-            res.setHeader('Location', url)
-            res.end()
+            if (typeof code === 'string') { url = code; code = 302; }
+            res.statusCode = code; res.setHeader('Location', url); res.end();
           }
 
           await apiHandler(req, res)
