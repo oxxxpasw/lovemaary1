@@ -152,7 +152,15 @@ export const AppProvider = ({ children }) => {
             .or(`partner_a.eq.${handle},partner_b.eq.${handle}`);
 
         if (marriageData) {
-            const detailedMarriages = await Promise.all(marriageData.map(async m => {
+            const seenPair = new Set();
+            const uniqueMarriages = marriageData.filter(m => {
+                const pair = [m.partner_a, m.partner_b].sort().join(':');
+                if (seenPair.has(pair)) return false;
+                seenPair.add(pair);
+                return true;
+            });
+
+            const detailedMarriages = await Promise.all(uniqueMarriages.map(async m => {
                 const partnerHandle = m.partner_a === handle ? m.partner_b : m.partner_a;
                 const { data: partner } = await supabase
                     .from('profiles')

@@ -13,6 +13,10 @@ const PassportScreen = () => {
 
     const isOwnPassport = !viewingHandle || viewingHandle === user?.handle;
 
+    // Стабильный ID на основе хендла
+    const getPseudoId = (handle) => `TH-${(handle || 'UNK').toUpperCase().substring(0, 3)}-${(handle || '').length}${Math.floor(Date.now() / 1000000)}`;
+    const passportId = viewedUser ? getPseudoId(viewedUser.handle) : '---';
+
     useEffect(() => {
         if (!isOwnPassport) {
             loadOtherUserData(viewingHandle);
@@ -55,7 +59,15 @@ const PassportScreen = () => {
                 console.error('Error fetching marriages:', marriageError);
                 setViewedMarriages([]);
             } else if (marriageData) {
-                const detailed = await Promise.all(marriageData.map(async (m) => {
+                const seenPair = new Set();
+                const uniqueMarriages = marriageData.filter(m => {
+                    const pair = [m.partner_a, m.partner_b].sort().join(':');
+                    if (seenPair.has(pair)) return false;
+                    seenPair.add(pair);
+                    return true;
+                });
+
+                const detailed = await Promise.all(uniqueMarriages.map(async (m) => {
                     const partnerHandle = m.partner_a === handle ? m.partner_b : m.partner_a;
                     const { data: partner, error: partnerError } = await supabase
                         .from('profiles')
@@ -95,9 +107,6 @@ const PassportScreen = () => {
 
     if (isLoading) return <div className="screen" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="animate-spin"><Sparkles size={32} color="var(--accent-neon)" /></div></div>;
 
-    // Стабильный ID на основе хендла
-    const getPseudoId = (handle) => `TH-${(handle || 'UNK').toUpperCase().substring(0, 3)}-${(handle || '').length}${Math.floor(Date.now() / 1000000)}`;
-
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -109,7 +118,7 @@ const PassportScreen = () => {
             <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h2 style={{ fontSize: '0.7rem', opacity: 0.5, letterSpacing: '0.3em' }}>DIGITAL PASSPORT</h2>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: 'bold' }}>{viewedUser ? getPseudoId(viewedUser.handle) : '---'}</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: 'bold' }}>{passportId}</span>
                 </div>
 
                 {/* Поиск профиля */}
