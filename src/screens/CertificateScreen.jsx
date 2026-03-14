@@ -18,11 +18,41 @@ const CertificateScreen = () => {
         return `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
     };
 
+    const getBase64Image = async (url) => {
+        try {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch (e) {
+            console.error('Failed to convert image to base64', e);
+            return url; // fallback
+        }
+    };
+
     const handleShare = async () => {
         if (!certificateRef.current) return;
         setIsExporting(true);
 
         try {
+            // 1. Находим все картинки внутри сертификата
+            const imgs = certificateRef.current.querySelectorAll('img');
+            const originalSrcs = [];
+
+            // 2. Временно меняем src на base64, чтобы обойти Canvas Taint
+            for (let i = 0; i < imgs.length; i++) {
+                originalSrcs.push(imgs[i].src);
+                imgs[i].src = await getBase64Image(imgs[i].src);
+                imgs[i].crossOrigin = 'anonymous'; // Убеждаемся
+            }
+
+            // Ждем чуть-чуть, чтобы DOM обновился
+            await new Promise(resolve => setTimeout(resolve, 50));
+
             const dataUrl = await toPng(certificateRef.current, {
                 cacheBust: true,
                 backgroundColor: '#050508',
@@ -30,6 +60,11 @@ const CertificateScreen = () => {
                     borderRadius: '0', // Full screen look for export
                 }
             });
+
+            // 3. Возвращаем оригинальные src
+            for (let i = 0; i < imgs.length; i++) {
+                imgs[i].src = originalSrcs[i];
+            }
 
             // Проверяем мобильное устройство
             if (navigator.share && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
