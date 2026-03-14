@@ -66,6 +66,8 @@ function AppContent() {
     if (tg) {
       tg.ready();
       tg.expand();
+      if (tg.requestFullscreen) tg.requestFullscreen();
+      if (tg.disableVerticalSwipe) tg.disableVerticalSwipe();
       tg.setHeaderColor('#050508');
       tg.setBackgroundColor('#050508');
       setViewportHeight(tg.viewportHeight + 'px');

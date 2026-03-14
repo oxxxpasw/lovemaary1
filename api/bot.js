@@ -32,15 +32,15 @@ export default async function handler(req, res) {
                     .ilike('handle', handle);
 
                 if (error) {
-                    await sendMsg(chatId, `❌ Ошибка привязки профиля @${handle}: ${error.message}`);
+                    await sendMsg(chatId, `❌ <b>Ошибка привязки:</b> @${handle}\n\nПожалуйста, убедитесь, что вы уже зашли в приложение MarryThreads хотя бы один раз.`);
                 } else {
-                    await sendMsg(chatId, `✅ <b>Уведомления активированы!</b>\n\nТеперь вы будете получать сообщения о новых предложениях и свадьбах для аккаунта @${handle}.`);
+                    await sendMsg(chatId, `🤝 <b>Профиль @${handle} успешно привязан!</b>\n\nТеперь я буду присылать вам мгновенные уведомления о:\n💍 Новых предложениях\n🎉 Заключенных союзах\n💔 Разводах\n\nИспользуйте Mini App, чтобы управлять своей личной жизнью в Threads! ✨`);
                 }
             } catch (err) {
-                await sendMsg(chatId, `❌ Системная ошибка: ${err.message}`);
+                await sendMsg(chatId, `❌ <b>Системная ошибка:</b>\n${err.message}`);
             }
         } else {
-            await sendMsg(chatId, "👋 <b>Добро пожаловать в MarryThreads!</b>\n\nЧтобы активировать уведомления, используйте кнопку в приложении или введите <code>/start ваш_ник_threads</code>");
+            await sendMsg(chatId, `✨ <b>Добро пожаловать в MarryThreads!</b> 💍\n\nЯ — официальный бот первого сервиса цифровых браков в Threads.\n\n<b>Что я умею:</b>\n— Сообщаю о новых сигналах внимания\n— Уведомляю о регистрации союзов\n— Помогаю делиться вашим цифровым паспортом\n\n🚀 <b>Запустите приложение ниже, чтобы начать!</b>\n\n<i>Если вы зашли не через Mini App, используйте команду:</i>\n<code>/start ваш_ник_threads</code>`);
         }
     }
 
