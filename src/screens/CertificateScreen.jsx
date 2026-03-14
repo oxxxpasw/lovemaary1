@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import { Share, Check, Heart, Sparkles, Download, Loader2 } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import html2canvas from 'html2canvas';
 import download from 'downloadjs';
 
 const CertificateScreen = () => {
@@ -25,22 +25,16 @@ const CertificateScreen = () => {
         setIsExporting(true);
 
         try {
-            const dataUrl = await toPng(certificateRef.current, {
-                cacheBust: true,
+            // Чтобы html2canvas корректно взял картинки без CORS-проблем, передаем proxy URL
+            const canvas = await html2canvas(certificateRef.current, {
+                useCORS: true,
+                allowTaint: false,
                 backgroundColor: '#050508',
-                style: {
-                    borderRadius: '0', // Full screen look for export
-                },
-                fetchRequest: (url, options) => {
-                    // Перехватываем запросы к внешним картинкам во время рендера
-                    if (url.includes('cdninstagram') || url.includes('fbcdn.net') || url.includes('scontent')) {
-                        const proxyUrl = `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
-                        // Принудительно передаем заголовки, если нужно (toPng может не передать кросс-доменные заголовки)
-                        return fetch(proxyUrl, { ...options, mode: 'cors' });
-                    }
-                    return fetch(url, options);
-                }
+                scale: 2, // Высокое качество
+                proxy: '/api/get-avatar?proxy=1', // html2canvas сам подставит &url=...
             });
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
             // Проверяем мобильное устройство
             if (navigator.share && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
