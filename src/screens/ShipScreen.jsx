@@ -152,7 +152,14 @@ const ShipScreen = () => {
 
                                 {/* Content */}
                                 <div style={{ minWidth: 0, flex: 1 }}>
-                                    <div className="truncate-text" style={{ fontWeight: '900', fontSize: 'clamp(1rem, 5vw, 1.2rem)', color: 'white', letterSpacing: '-0.02em' }}>
+                                    <div style={{
+                                        fontWeight: '900',
+                                        fontSize: 'clamp(0.95rem, 4.5vw, 1.15rem)',
+                                        color: 'white',
+                                        letterSpacing: '-0.02em',
+                                        wordBreak: 'break-all',
+                                        lineHeight: 1.2
+                                    }}>
                                         @{ship.partner_a} <span style={{ opacity: 0.3, fontWeight: '400' }}>&</span> @{ship.partner_b}
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>

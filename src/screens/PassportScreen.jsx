@@ -189,7 +189,7 @@ const PassportScreen = () => {
                     >
                         {/* Background Decoration */}
                         <div style={{ position: 'absolute', right: '-40px', bottom: '-40px', opacity: 0.03, pointerEvents: 'none', color: 'var(--accent-neon)' }}>
-                            <ShieldAlert size={280} />
+                            <Heart size={280} fill="currentColor" />
                         </div>
 
                         {/* Card Header Area */}
@@ -227,25 +227,25 @@ const PassportScreen = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', justifyContent: 'center', overflow: 'hidden' }}>
                                 <div style={{ overflow: 'hidden' }}>
                                     <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '4px', fontWeight: '800' }}>Registry Handle</p>
-                                    <h3 className="truncate-text" style={{ fontSize: '1.5rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white' }}>
+                                    <h3 style={{ fontSize: 'clamp(1.2rem, 5vw, 1.5rem)', fontWeight: '900', letterSpacing: '-0.02em', color: 'white', wordBreak: 'break-all' }}>
                                         @{viewedUser?.handle}
                                     </h3>
                                 </div>
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                    <div style={{ overflow: 'hidden' }}>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Status</p>
-                                        <p className="truncate-text" style={{ fontSize: '0.85rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser?.status || 'Active'}</p>
+                                    <div>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Статус</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '900', color: 'var(--accent-neon)', wordBreak: 'break-word', lineHeight: 1.2 }}>{viewedUser?.status || 'Active'}</p>
                                     </div>
-                                    <div style={{ overflow: 'hidden' }}>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Role</p>
-                                        <p className="truncate-text" style={{ fontSize: '0.85rem', fontWeight: '900', color: 'white' }}>{viewedUser?.role}</p>
+                                    <div>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Роль</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '900', color: 'white', wordBreak: 'break-word', lineHeight: 1.2 }}>{viewedUser?.role}</p>
                                     </div>
                                 </div>
 
                                 <div style={{ marginTop: '5px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <ShieldCheck size={12} color="var(--accent-neon)" opacity={0.6} />
-                                    <span style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Security: Platinum Level</span>
+                                    <Heart size={12} color="var(--accent-neon)" opacity={0.6} />
+                                    <span style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Защита: Платиновый уровень</span>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +312,7 @@ const PassportScreen = () => {
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                                             <div style={{ textAlign: 'right' }}>
                                                 <div style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.05em' }}>{m.date}</div>
-                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>Established</div>
+                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>Создан</div>
                                             </div>
 
                                             {isOwnPassport && (
