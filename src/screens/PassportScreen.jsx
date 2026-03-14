@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Share2, ArrowLeft, Heart, Sparkles, XOctagon, History as HistoryIcon, Search } from 'lucide-react';
+import { Share2, ArrowLeft, Heart, Sparkles, XOctagon, History as HistoryIcon, Search, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 
 const PassportScreen = () => {
@@ -211,7 +211,7 @@ const PassportScreen = () => {
                                         boxShadow: '0 0 30px rgba(0, 242, 255, 0.3)'
                                     }}
                                 >
-                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '31px' }} />
+                                    <img src={viewedUser?.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '31px' }} />
                                 </motion.div>
                                 <div style={{
                                     background: 'rgba(0, 242, 255, 0.15)', color: 'var(--accent-neon)',
@@ -228,18 +228,18 @@ const PassportScreen = () => {
                                 <div>
                                     <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Registry Handle</p>
                                     <h3 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.04em', color: 'white', lineHeight: 1 }}>
-                                        @{viewedUser.handle}
+                                        @{viewedUser?.handle}
                                     </h3>
                                 </div>
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                                     <div>
                                         <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Status</p>
-                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser.status || 'Active'}</p>
+                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser?.status || 'Active'}</p>
                                     </div>
                                     <div>
                                         <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Role</p>
-                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'white' }}>{viewedUser.role}</p>
+                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'white' }}>{viewedUser?.role}</p>
                                     </div>
                                 </div>
 

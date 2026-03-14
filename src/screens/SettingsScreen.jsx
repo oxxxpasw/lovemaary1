@@ -61,25 +61,25 @@ const SettingsScreen = () => {
         <div
             onClick={onToggle}
             style={{
-                width: '48px', height: '28px',
-                borderRadius: '14px',
-                background: value ? 'var(--accent-neon)' : 'rgba(255,255,255,0.1)',
+                width: '56px', height: '30px',
+                borderRadius: '15px',
+                background: value ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${value ? 'rgba(0, 242, 255, 0.4)' : 'rgba(255,255,255,0.1)'}`,
                 padding: '3px',
                 cursor: 'pointer',
-                transition: 'background 0.2s ease, justify-content 0.2s ease',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: value ? 'flex-end' : 'flex-start'
+                position: 'relative'
             }}
         >
-            <div
+            <motion.div
+                animate={{ x: value ? 26 : 0 }}
                 style={{
                     width: '22px', height: '22px',
                     borderRadius: '11px',
-                    background: 'white',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                    transition: 'transform 0.2s ease',
-                    transform: value ? 'translateX(0)' : 'translateX(0)'
+                    background: value ? 'var(--accent-neon)' : 'rgba(255,255,255,0.4)',
+                    boxShadow: value ? '0 0 15px var(--accent-neon)' : 'none',
                 }}
             />
         </div>
@@ -93,6 +93,11 @@ const SettingsScreen = () => {
             className="screen"
             style={{ paddingTop: '110px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
+            {/* ... previous header and profile card code is already there ... */}
+
+            {/* Header and Profile card were already updated in previous step, so I'll just skip to the sections */}
+            {/* Actually I need to re-include them because replace_file_content replaces the STRETCH of code */}
+
             {/* Premium Header with Back Button */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2.5rem', position: 'relative', zIndex: 10 }}>
                 <motion.button
@@ -161,26 +166,28 @@ const SettingsScreen = () => {
                 </motion.div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
-                {/* Роль */}
-                <div>
-                    <h3 style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.8rem', paddingLeft: '5px' }}>
+                {/* Profile Section */}
+                <div style={{ position: 'relative', zIndex: 5 }}>
+                    <h3 style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.3rem', marginBottom: '1.2rem', paddingLeft: '5px', fontWeight: '900' }}>
                         Профиль
                     </h3>
-                    <div className="cyber-card" style={{ padding: '5px' }}>
+                    <div className="glass-panel" style={{ padding: '8px', borderRadius: '24px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <motion.div
-                            whileTap={{ background: 'rgba(255,255,255,0.05)' }}
+                            whileTap={{ background: 'rgba(255,255,255,0.03)' }}
                             onClick={() => setShowRolePicker(!showRolePicker)}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 15px', borderRadius: '15px', cursor: 'pointer' }}
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderRadius: '18px', cursor: 'pointer' }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <Crown size={20} color="var(--accent-neon)" />
-                                <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>Роль</span>
+                                <div style={{ color: 'var(--accent-neon)', background: 'rgba(0, 242, 255, 0.1)', padding: '10px', borderRadius: '12px' }}>
+                                    <Crown size={22} />
+                                </div>
+                                <span style={{ fontWeight: '800', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>Цифровая Роль</span>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ fontSize: '0.85rem', color: 'var(--accent-neon)', fontWeight: '700' }}>{user?.role || 'Моногам'}</span>
-                                <ChevronRight size={16} color="var(--text-muted)" style={{ opacity: 0.3 }} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--accent-neon)', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{user?.role || 'Моногам'}</span>
+                                <ChevronRight size={18} style={{ opacity: 0.3 }} />
                             </div>
                         </motion.div>
 
@@ -188,23 +195,26 @@ const SettingsScreen = () => {
                             <motion.div
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
-                                style={{ padding: '0 15px 15px', overflow: 'hidden' }}
+                                style={{ padding: '5px 15px 15px', overflow: 'hidden' }}
                             >
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                                     {roles.map(r => (
                                         <motion.button
                                             key={r}
                                             whileTap={{ scale: 0.95 }}
                                             onClick={() => changeRole(r)}
                                             style={{
-                                                padding: '8px 16px',
-                                                borderRadius: '20px',
-                                                border: 'none',
-                                                fontSize: '0.8rem',
-                                                fontWeight: '700',
+                                                padding: '12px 10px',
+                                                borderRadius: '16px',
+                                                border: user?.role === r ? '1px solid var(--accent-neon)' : '1px solid rgba(255,255,255,0.05)',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '900',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em',
                                                 cursor: 'pointer',
-                                                background: user?.role === r ? 'var(--grad-neon)' : 'rgba(255,255,255,0.05)',
-                                                color: user?.role === r ? 'black' : 'white'
+                                                background: user?.role === r ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255,255,255,0.02)',
+                                                color: user?.role === r ? 'var(--accent-neon)' : 'rgba(255,255,255,0.6)',
+                                                transition: 'all 0.2s'
                                             }}
                                         >
                                             {r}
@@ -216,89 +226,104 @@ const SettingsScreen = () => {
                     </div>
                 </div>
 
-                {/* Уведомления */}
-                <div>
-                    <h3 style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.8rem', paddingLeft: '5px' }}>
-                        Уведомления
+                {/* Notifications Section */}
+                <div style={{ position: 'relative', zIndex: 5 }}>
+                    <h3 style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.3rem', marginBottom: '1.2rem', paddingLeft: '5px', fontWeight: '900' }}>
+                        Связь и Контроль
                     </h3>
-                    <div className="cyber-card" style={{ padding: '5px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 15px', borderRadius: '15px' }}>
+                    <div className="glass-panel" style={{ padding: '8px', borderRadius: '24px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <Heart size={20} color="var(--accent-hot)" />
+                                <div style={{ color: 'var(--accent-hot)', background: 'rgba(255, 45, 85, 0.1)', padding: '10px', borderRadius: '12px' }}>
+                                    <Heart size={22} />
+                                </div>
                                 <div>
-                                    <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>Предложения</div>
-                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Когда кто-то шлет сигнал</div>
+                                    <div style={{ fontWeight: '800', fontSize: '1.05rem', letterSpacing: '-0.02em' }}>Предложения</div>
+                                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: '700' }}>Сигналы о новых чувствах</div>
                                 </div>
                             </div>
                             <Toggle value={notifyProposals} onToggle={toggleNotifyProposals} />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 15px', borderRadius: '15px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <Sparkles size={20} color="#a855f7" />
+                                <div style={{ color: 'var(--accent-neon)', background: 'rgba(0, 242, 255, 0.1)', padding: '10px', borderRadius: '12px' }}>
+                                    <Sparkles size={22} />
+                                </div>
                                 <div>
-                                    <div style={{ fontWeight: '600', fontSize: '0.95rem' }}>Свадьбы</div>
-                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Когда союз оформлен</div>
+                                    <div style={{ fontWeight: '800', fontSize: '1.05rem', letterSpacing: '-0.02em' }}>Свадьбы</div>
+                                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: '700' }}>Оповещения о финализации союзов</div>
                                 </div>
                             </div>
                             <Toggle value={notifyMarriages} onToggle={toggleNotifyMarriages} />
                         </div>
 
-                        {!telegramConnected ? (
-                            <div style={{ padding: '15px', borderRadius: '15px', background: 'rgba(0, 242, 255, 0.05)', margin: '5px', border: '1px solid rgba(0, 242, 255, 0.1)' }}>
-                                <div style={{ marginBottom: '12px' }}>
-                                    <div style={{ fontWeight: '800', fontSize: '0.9rem', color: 'var(--accent-neon)', marginBottom: '4px' }}>Бот не подключен</div>
-                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                                        Подключите нашего бота, чтобы получать мгновенные уведомления о предложениях и свадьбах.
+                        {/* Telegram Status Card */}
+                        <div style={{ padding: '5px' }}>
+                            <div style={{
+                                padding: '20px',
+                                borderRadius: '20px',
+                                background: telegramConnected ? 'rgba(16, 185, 129, 0.05)' : 'rgba(0, 242, 255, 0.03)',
+                                border: `1px solid ${telegramConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 242, 255, 0.1)'}`,
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{ position: 'relative', zIndex: 2 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: telegramConnected ? '#10b981' : 'var(--accent-neon)', boxShadow: `0 0 10px ${telegramConnected ? '#10b981' : 'var(--accent-neon)'}` }} />
+                                        <span style={{ fontSize: '0.8rem', color: telegramConnected ? '#10b981' : 'var(--accent-neon)', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                            {telegramConnected ? 'Telegram Bot Active' : 'Telegram Bot Offline'}
+                                        </span>
                                     </div>
+                                    {!telegramConnected && (
+                                        <>
+                                            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', lineHeight: '1.5', marginBottom: '18px', fontWeight: '600' }}>
+                                                Активируйте систему мгновенных уведомлений через нашего официального бота.
+                                            </p>
+                                            <motion.button
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => window.open(`https://t.me/ThreadsMarryBot?start=${user?.handle}`, '_blank')}
+                                                style={{
+                                                    width: '100%', padding: '14px', borderRadius: '14px',
+                                                    background: 'var(--accent-neon)', color: 'black', border: 'none',
+                                                    fontSize: '0.85rem', fontWeight: '900', cursor: 'pointer',
+                                                    boxShadow: '0 10px 20px rgba(0, 242, 255, 0.3)'
+                                                }}
+                                            >
+                                                ПОДКЛЮЧИТЬ СИСТЕМУ
+                                            </motion.button>
+                                        </>
+                                    )}
                                 </div>
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => window.open(`https://t.me/ThreadsMarryBot?start=${user.handle}`, '_blank')}
-                                    style={{
-                                        width: '100%', padding: '12px', borderRadius: '12px',
-                                        background: 'var(--accent-neon)', color: 'black', border: 'none',
-                                        fontSize: '0.85rem', fontWeight: '900', cursor: 'pointer'
-                                    }}
-                                >
-                                    ПОДКЛЮЧИТЬ БОТА
-                                </motion.button>
                             </div>
-                        ) : (
-                            <div style={{ padding: '12px 15px', borderRadius: '15px', background: 'rgba(16, 185, 129, 0.05)', margin: '5px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
-                                    <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '800' }}>
-                                        Telegram Bot подключен
-                                    </span>
-                                </div>
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </div>
 
-
-                {/* Выход */}
+                {/* Logout Button - Hot Accent */}
                 <motion.button
                     whileTap={{ scale: 0.98 }}
                     onClick={() => logout()}
                     style={{
                         width: '100%',
-                        padding: '18px',
-                        background: 'rgba(255, 45, 85, 0.08)',
-                        border: '1px solid rgba(255, 45, 85, 0.15)',
-                        borderRadius: '20px',
-                        color: '#ff2d55',
+                        padding: '22px',
+                        background: 'rgba(255, 45, 85, 0.05)',
+                        border: '1.5px solid rgba(255, 45, 85, 0.15)',
+                        borderRadius: '24px',
+                        color: 'var(--accent-hot)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '12px',
-                        fontWeight: '800',
+                        fontWeight: '900',
                         fontSize: '1rem',
-                        marginTop: '0.5rem'
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        marginTop: '1rem',
+                        transition: 'all 0.3s'
                     }}
                 >
-                    <LogOut size={20} />
-                    Выйти из аккаунта
+                    <LogOut size={22} />
+                    Деактивировать сессию
                 </motion.button>
             </div>
 
