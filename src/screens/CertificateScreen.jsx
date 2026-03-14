@@ -18,54 +18,29 @@ const CertificateScreen = () => {
         return `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
     };
 
-    const getBase64Image = async (url) => {
-        try {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        } catch (e) {
-            console.error('Failed to convert image to base64', e);
-            return url; // fallback
-        }
-    };
+
 
     const handleShare = async () => {
         if (!certificateRef.current) return;
         setIsExporting(true);
 
         try {
-            // 1. Находим все картинки внутри сертификата
-            const imgs = certificateRef.current.querySelectorAll('img[data-export="avatar"]');
-            const originalSrcs = [];
-
-            // 2. Временно меняем src на base64, чтобы обойти Canvas Taint
-            for (let i = 0; i < imgs.length; i++) {
-                originalSrcs.push(imgs[i].src);
-                // Запрашиваем base64 через прокси, чтобы fetch не упал от CORS
-                const proxyUrl = proxyImage(imgs[i].src);
-                imgs[i].src = await getBase64Image(proxyUrl);
-            }
-
-            // Ждем чуть-чуть, чтобы DOM обновился
-            await new Promise(resolve => setTimeout(resolve, 100));
-
             const dataUrl = await toPng(certificateRef.current, {
                 cacheBust: true,
                 backgroundColor: '#050508',
                 style: {
                     borderRadius: '0', // Full screen look for export
+                },
+                fetchRequest: (url, options) => {
+                    // Перехватываем запросы к внешним картинкам во время рендера
+                    if (url.includes('cdninstagram') || url.includes('fbcdn.net') || url.includes('scontent')) {
+                        const proxyUrl = `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
+                        // Принудительно передаем заголовки, если нужно (toPng может не передать кросс-доменные заголовки)
+                        return fetch(proxyUrl, { ...options, mode: 'cors' });
+                    }
+                    return fetch(url, options);
                 }
             });
-
-            // 3. Возвращаем оригинальные src
-            for (let i = 0; i < imgs.length; i++) {
-                imgs[i].src = originalSrcs[i];
-            }
 
             // Проверяем мобильное устройство
             if (navigator.share && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
