@@ -1,5 +1,5 @@
 // Vercel Serverless Function: обработка вебхуков Telegram
-// Endpoint: POST /api/bot
+// Endpoint: POST /api/bot (webhook) | GET /api/bot (auto-setup)
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -8,15 +8,49 @@ const supabase = createClient(
     process.env.VITE_SUPABASE_ANON_KEY || ''
 );
 
+// Используем токен напрямую (по просьбе пользователя)
 const BOT_TOKEN = '8612737038:AAFMUDR3hFoF1O6JzWOBmY_f5GhjeOH_bgw';
 
 export default async function handler(req, res) {
+    // 1. Проверка токена
+    if (!BOT_TOKEN) {
+        console.error('[Bot] Error: TELEGRAM_BOT_TOKEN is missing in env');
+        return res.status(500).json({ error: 'Bot token not configured' });
+    }
+
+    // 2. Авто-настройка вебхука через GET запрос
+    if (req.method === 'GET') {
+        const protocol = req.headers['x-forwarded-proto'] || 'https';
+        const host = req.headers.host;
+        const webhookUrl = `${protocol}://${host}/api/bot`;
+
+        try {
+            console.log(`[Bot Setup] Registering webhook: ${webhookUrl}`);
+            const setupRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${webhookUrl}`);
+            const setupData = await setupRes.json();
+
+            return res.status(200).json({
+                message: 'Webhook setup attempt finished',
+                webhook: webhookUrl,
+                telegram_response: setupData
+            });
+        } catch (err) {
+            return res.status(500).json({ error: 'Setup failed', details: err.message });
+        }
+    }
+
     if (req.method !== 'POST') return res.status(405).end();
 
     const body = req.body;
-    console.log('[Bot Webhook] Incoming:', JSON.stringify(body));
+    if (!body || !body.update_id) {
+        // Иногда Telegram присылает пустые пинги
+        return res.status(200).json({ ok: true });
+    }
 
-    if (!body.message) return res.status(200).end();
+    console.log('[Bot Webhook] Incoming update:', body.update_id);
+
+    // Обработка только текстовых сообщений
+    if (!body.message || !body.message.text) return res.status(200).end();
 
     const chatId = body.message.chat.id;
     const text = body.message.text || '';

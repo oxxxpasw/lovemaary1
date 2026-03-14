@@ -61,6 +61,17 @@ function AppContent() {
   const [viewportHeight, setViewportHeight] = useState('100vh');
 
   useEffect(() => {
+    // Авто-настройка вебхука при запуске (только один раз)
+    const setupBot = async () => {
+      try {
+        await fetch('/api/bot');
+        console.log('[Bot Setup] Auto-ping sent');
+      } catch (err) {
+        console.warn('[Bot Setup] Auto-ping failed (expected in local dev):', err);
+      }
+    };
+    setupBot();
+
     const tg = window.Telegram?.WebApp;
 
     if (tg) {
