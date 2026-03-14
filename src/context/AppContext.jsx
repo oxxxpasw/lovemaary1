@@ -12,20 +12,52 @@ export const AppProvider = ({ children }) => {
     const [receivedProposals, setReceivedProposals] = useState([]);
     const [sentProposals, setSentProposals] = useState([]);
 
-    // 1. Начальная загрузка и Real-time подписка
+    // 1. Начальная загрузка и восстановление сессии
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (currentScreen === 'splash') setCurrentScreen('auth');
-        }, 3000);
-
-        return () => clearTimeout(timer);
+        const savedHandle = localStorage.getItem('marrythreads_handle');
+        if (savedHandle) {
+            restoreSession(savedHandle);
+        } else {
+            const timer = setTimeout(() => {
+                if (currentScreen === 'splash') setCurrentScreen('auth');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
     }, []);
+
+    const restoreSession = async (handle) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('handle', handle)
+            .maybeSingle();
+
+        if (error) {
+            console.error('[Supabase] Ошибка восстановления сессии (406?):', error);
+            if (error.message) console.error('Детали:', error.message);
+            setCurrentScreen('auth');
+            return;
+        }
+
+        if (data) {
+            setUser({
+                handle: data.handle,
+                avatar: data.avatar_url,
+                silk: data.silk,
+                role: data.role,
+                status: data.status
+            });
+            setCurrentScreen('dashboard');
+        } else {
+            setCurrentScreen('auth');
+        }
+    };
 
     // 2. Real-time подписка на входящие предложения
     useEffect(() => {
         if (!user) return;
 
-        console.log(`[Supabase] Setting up subscription for: ${user.handle}`);
+        console.log(`[Supabase] Попытка подписки для пользователя: ${user.handle}`);
 
         const subscription = supabase
             .channel('proposals_channel')
@@ -35,11 +67,11 @@ export const AppProvider = ({ children }) => {
                 table: 'proposals',
                 filter: `to_handle=eq.${user.handle}`
             }, async (payload) => {
-                console.log('[Supabase] NEW PROPOSAL RECEIVED:', payload.new);
+                console.log('[Supabase] ПОЛУЧЕН НОВЫЙ СИГНАЛ:', payload.new);
 
                 // Получаем данные отправителя (аватарку)
                 const { data: sender } = await supabase
-                    .from('users')
+                    .from('profiles')
                     .select('*')
                     .eq('handle', payload.new.from_handle)
                     .single();
@@ -50,13 +82,20 @@ export const AppProvider = ({ children }) => {
                     avatar: sender?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${payload.new.from_handle}`,
                     date: new Date(payload.new.created_at).toLocaleDateString('ru-RU')
                 }, ...prev]);
+
+                if (window.Telegram?.WebApp) {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                }
             })
-            .subscribe();
+            .subscribe((status) => {
+                console.log(`[Supabase] Статус подписки для @${user.handle}:`, status);
+            });
 
         // Загружаем существующие предложения при логине
         loadInitialData(user.handle);
 
         return () => {
+            console.log('[Supabase] Отписка...');
             supabase.removeChannel(subscription);
         };
     }, [user]);
@@ -73,7 +112,7 @@ export const AppProvider = ({ children }) => {
             // Для каждого предложения подтягиваем аватарку
             const detailedProposals = await Promise.all(proposals.map(async p => {
                 const { data: sender } = await supabase
-                    .from('users')
+                    .from('profiles')
                     .select('avatar_url')
                     .eq('handle', p.from_handle)
                     .single();
@@ -98,7 +137,7 @@ export const AppProvider = ({ children }) => {
             const detailedMarriages = await Promise.all(marriageData.map(async m => {
                 const partnerHandle = m.partner_a === handle ? m.partner_b : m.partner_a;
                 const { data: partner } = await supabase
-                    .from('users')
+                    .from('profiles')
                     .select('avatar_url')
                     .eq('handle', partnerHandle)
                     .single();
@@ -117,27 +156,46 @@ export const AppProvider = ({ children }) => {
 
     const login = async (userData) => {
         // userData в формате { handle, avatar, bio, fromScraper }
+        localStorage.setItem('marrythreads_handle', userData.handle);
+
+        // Проверяем, есть ли уже такой пользователь и какой у него аватар
+        const { data: existingUser, error: checkError } = await supabase
+            .from('profiles')
+            .select('avatar_url, status')
+            .eq('handle', userData.handle)
+            .maybeSingle();
+
+        if (checkError) {
+            console.warn('[Supabase] Ошибка при проверке профиля:', checkError);
+        }
+
+        let finalAvatar = userData.avatar;
+        // Если у нас уже есть аватарка в базе, а сейчас пришла заглушка - не перезаписываем хорошую аватарку
+        if (existingUser?.avatar_url && !userData.fromScraper && existingUser.avatar_url.includes('cdninstagram')) {
+            finalAvatar = existingUser.avatar_url;
+        }
+
         const { data, error } = await supabase
-            .from('users')
+            .from('profiles')
             .upsert({
                 handle: userData.handle,
-                avatar_url: userData.avatar,
-                status: 'Свободен'
+                avatar_url: finalAvatar,
+                status: existingUser?.status || 'Свободен'
             }, { onConflict: 'handle' })
             .select()
-            .single();
+            .maybeSingle();
 
         if (error) {
-            console.error('[Supabase] Login error:', error);
-            // Fallback если что-то не так с БД
+            console.error('[Supabase] Ошибка входа (UPSERT):', error);
+            // Fallback: заходим как "гость" если БД лежит, но даем пользователю поиграть
             setUser({
                 handle: userData.handle,
-                avatar: userData.avatar,
+                avatar: finalAvatar,
                 silk: 100,
                 role: 'Моногам',
                 status: 'Свободен'
             });
-        } else {
+        } else if (data) {
             setUser({
                 handle: data.handle,
                 avatar: data.avatar_url,
@@ -154,7 +212,7 @@ export const AppProvider = ({ children }) => {
 
         // Сначала регистрируем партнера в базе, если его там нет (чтобы сработал Foreign Key)
         await supabase
-            .from('users')
+            .from('profiles')
             .upsert({
                 handle: partnerData.handle,
                 avatar_url: partnerData.avatar,
@@ -226,7 +284,7 @@ export const AppProvider = ({ children }) => {
             // Обновляем статус пользователя
             const newStatus = `В союзе с @${activeWedding.partner}`;
             await supabase
-                .from('users')
+                .from('profiles')
                 .update({
                     status: newStatus,
                     silk: user.silk + 50

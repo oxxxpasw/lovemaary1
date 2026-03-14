@@ -8,7 +8,7 @@ const Dashboard = () => {
     const {
         user, setUser, setCurrentScreen,
         sendProposal, receivedProposals, acceptProposal, rejectProposal,
-        sentProposals, updateUser
+        sentProposals, updateUser, logout
     } = useApp();
     const [searchQuery, setSearchQuery] = useState('');
     const [showProposalModal, setShowProposalModal] = useState(false);
@@ -217,7 +217,7 @@ const Dashboard = () => {
                 <motion.div whileTap={{ scale: 0.8 }} onClick={() => setCurrentScreen('passport')}>
                     <User size={24} color="var(--text-muted)" />
                 </motion.div>
-                <motion.div whileTap={{ scale: 0.8 }}>
+                <motion.div whileTap={{ scale: 0.8 }} onClick={() => logout()}>
                     <Settings size={24} color="var(--text-muted)" />
                 </motion.div>
             </div>
