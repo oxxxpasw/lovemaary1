@@ -3,6 +3,7 @@ import { supabase } from '../utils/supabase';
 
 const AppContext = createContext();
 
+// Провайдер состояния
 export const AppProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [currentScreen, setCurrentScreen] = useState('splash');
@@ -11,6 +12,15 @@ export const AppProvider = ({ children }) => {
     const [marriages, setMarriages] = useState([]);
     const [receivedProposals, setReceivedProposals] = useState([]);
     const [sentProposals, setSentProposals] = useState([]);
+
+    // Утилита для гарантированного отображения аватарок через прокси
+    const ensureSafeAvatar = (url) => {
+        if (!url) return `https://api.dicebear.com/7.x/avataaars/svg?seed=guest`;
+        if (url.includes('cdninstagram.com') && !url.includes('weserv.nl')) {
+            return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&default=identicon`;
+        }
+        return url;
+    };
 
     // 1. Начальная загрузка и восстановление сессии
     useEffect(() => {
@@ -42,7 +52,7 @@ export const AppProvider = ({ children }) => {
         if (data) {
             setUser({
                 handle: data.handle,
-                avatar: data.avatar_url,
+                avatar: ensureSafeAvatar(data.avatar_url),
                 silk: data.silk,
                 role: data.role,
                 status: data.status
@@ -74,13 +84,13 @@ export const AppProvider = ({ children }) => {
                     .from('profiles')
                     .select('*')
                     .eq('handle', payload.new.from_handle)
-                    .single();
+                    .maybeSingle();
 
                 setReceivedProposals(prev => [{
                     id: payload.new.id,
                     from: payload.new.from_handle,
-                    avatar: sender?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${payload.new.from_handle}`,
-                    date: new Date(payload.new.created_at).toLocaleDateString('ru-RU')
+                    avatar: ensureSafeAvatar(sender?.avatar_url),
+                    date: new Date().toLocaleDateString('ru-RU')
                 }, ...prev]);
 
                 if (window.Telegram?.WebApp) {
@@ -115,12 +125,12 @@ export const AppProvider = ({ children }) => {
                     .from('profiles')
                     .select('avatar_url')
                     .eq('handle', p.from_handle)
-                    .single();
+                    .maybeSingle();
 
                 return {
                     id: p.id,
                     from: p.from_handle,
-                    avatar: sender?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.from_handle}`,
+                    avatar: ensureSafeAvatar(sender?.avatar_url),
                     date: new Date(p.created_at).toLocaleDateString('ru-RU')
                 };
             }));
@@ -140,12 +150,12 @@ export const AppProvider = ({ children }) => {
                     .from('profiles')
                     .select('avatar_url')
                     .eq('handle', partnerHandle)
-                    .single();
+                    .maybeSingle();
 
                 return {
                     id: m.id,
                     partner: partnerHandle,
-                    partnerAvatar: partner?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partnerHandle}`,
+                    partnerAvatar: ensureSafeAvatar(partner?.avatar_url),
                     date: new Date(m.created_at).toLocaleDateString('ru-RU'),
                     style: m.wedding_style
                 };
@@ -198,13 +208,20 @@ export const AppProvider = ({ children }) => {
         } else if (data) {
             setUser({
                 handle: data.handle,
-                avatar: data.avatar_url,
+                avatar: ensureSafeAvatar(data.avatar_url),
                 silk: data.silk,
                 role: data.role,
                 status: data.status
             });
         }
         setCurrentScreen('dashboard');
+    };
+
+    const logout = () => {
+        localStorage.removeItem('marrythreads_handle');
+        setUser(null);
+        setCurrentScreen('auth');
+        window.location.reload(); // Перезагружаем для чистой очистки состояния
     };
 
     const sendProposal = async (partnerData) => {
@@ -313,7 +330,7 @@ export const AppProvider = ({ children }) => {
         if (!user) return;
 
         const { error } = await supabase
-            .from('users')
+            .from('profiles')
             .update(updates)
             .eq('handle', user.handle);
 
@@ -331,11 +348,18 @@ export const AppProvider = ({ children }) => {
             receivedProposals, sentProposals,
             activeWedding, startWedding, completeWedding,
             sendProposal, acceptProposal, rejectProposal,
-            login, updateUser
+            login, updateUser, logout
         }}>
             {children}
         </AppContext.Provider>
     );
 };
 
-export const useApp = () => useContext(AppContext);
+// Хук для использования контекста
+export const useApp = () => {
+    const context = useContext(AppContext);
+    if (!context) {
+        throw new Error('useApp must be used within an AppProvider');
+    }
+    return context;
+};
