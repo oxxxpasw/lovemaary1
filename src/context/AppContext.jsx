@@ -9,10 +9,12 @@ export const AppProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [currentScreen, setCurrentScreen] = useState('splash');
     const [activeWedding, setActiveWedding] = useState(null);
+    const [isPerformingWedding, setIsPerformingWedding] = useState(false);
     const [inventory, setInventory] = useState([]);
     const [marriages, setMarriages] = useState([]);
     const [receivedProposals, setReceivedProposals] = useState([]);
     const [sentProposals, setSentProposals] = useState([]);
+    const [viewingHandle, setViewingHandle] = useState(null); // Для публичных паспортов
 
     // Утилита для гарантированного отображения аватарок через прокси
     const ensureSafeAvatar = (url) => {
@@ -94,6 +96,7 @@ export const AppProvider = ({ children }) => {
                     id: payload.new.id,
                     from: payload.new.from_handle,
                     avatar: ensureSafeAvatar(sender?.avatar_url),
+                    ring_id: payload.new.ring_id || 'basic',
                     date: new Date().toLocaleDateString('ru-RU')
                 }, ...prev]);
 
@@ -135,6 +138,7 @@ export const AppProvider = ({ children }) => {
                     id: p.id,
                     from: p.from_handle,
                     avatar: ensureSafeAvatar(sender?.avatar_url),
+                    ring_id: p.ring_id || 'basic',
                     date: new Date(p.created_at).toLocaleDateString('ru-RU')
                 };
             }));
@@ -144,7 +148,7 @@ export const AppProvider = ({ children }) => {
         // Получаем историю браков
         const { data: marriageData } = await supabase
             .from('marriages')
-            .select('*')
+            .select('id, partner_a, partner_b, wedding_style, ring_id, hype_score, created_at')
             .or(`partner_a.eq.${handle},partner_b.eq.${handle}`);
 
         if (marriageData) {
@@ -161,7 +165,9 @@ export const AppProvider = ({ children }) => {
                     partner: partnerHandle,
                     partnerAvatar: ensureSafeAvatar(partner?.avatar_url),
                     date: new Date(m.created_at).toLocaleDateString('ru-RU'),
-                    style: m.wedding_style
+                    style: m.wedding_style,
+                    ring_id: m.ring_id || 'basic',
+                    hype_score: m.hype_score || 0
                 };
             }));
             setMarriages(detailedMarriages);
@@ -256,6 +262,19 @@ export const AppProvider = ({ children }) => {
             return { success: false, error: 'У вас уже есть активное предложение с этим пользователем.' };
         }
 
+        // Проверка 3: Лимит браков (Полиамория)
+        const polyRoles = ['Хаос-друг', 'Серийный женатик', 'Полиамор', 'Сводник'];
+        const maxMarriages = (polyRoles.includes(user.role) || user.silk >= 1000) ? 3 : 1;
+
+        const { count } = await supabase
+            .from('marriages')
+            .select('*', { count: 'exact', head: true })
+            .or(`partner_a.eq.${user.handle},partner_b.eq.${user.handle}`);
+
+        if (count >= maxMarriages) {
+            return { success: false, error: `Достигнут лимит браков (${maxMarriages}) для вашей роли/баланса.` };
+        }
+
         // Сначала регистрируем партнера в базе, если его там нет (чтобы сработал Foreign Key)
         await supabase
             .from('profiles')
@@ -270,7 +289,8 @@ export const AppProvider = ({ children }) => {
             .insert({
                 from_handle: user.handle,
                 to_handle: partnerData.handle,
-                status: 'pending'
+                status: 'pending',
+                ring_id: partnerData.ringId || 'basic'
             });
 
         if (error) {
@@ -295,7 +315,8 @@ export const AppProvider = ({ children }) => {
 
         startWedding({
             handle: proposal.from,
-            avatar: proposal.avatar
+            avatar: proposal.avatar,
+            ringId: proposal.ring_id
         });
     };
 
@@ -313,73 +334,85 @@ export const AppProvider = ({ children }) => {
             partner: partnerData.handle,
             partnerAvatar: partnerData.avatar,
             style: 'Кибер-ЗАГС',
+            ringId: partnerData.ringId || 'basic',
             date: new Date().toLocaleDateString('ru-RU')
         });
         setCurrentScreen('chapel');
     };
 
     const completeWedding = async () => {
-        if (activeWedding) {
-            // Сохраняем брак в БД
-            const { data: newMarriage } = await supabase
-                .from('marriages')
-                .insert({
-                    partner_a: user.handle,
-                    partner_b: activeWedding.partner,
-                    wedding_style: activeWedding.style
-                })
-                .select()
-                .single();
+        if (activeWedding && !isPerformingWedding) {
+            setIsPerformingWedding(true);
+            try {
+                // Сохраняем брак в БД
+                const { data: newMarriage, error: insertError } = await supabase
+                    .from('marriages')
+                    .insert({
+                        partner_a: user.handle,
+                        partner_b: activeWedding.partner,
+                        wedding_style: activeWedding.style,
+                        ring_id: activeWedding.ringId || 'basic'
+                    })
+                    .select()
+                    .single();
 
-            // Обновляем статус текущего пользователя
-            const newStatus = `В союзе с @${activeWedding.partner}`;
-            await supabase
-                .from('profiles')
-                .update({
-                    status: newStatus,
-                    silk: user.silk + 50
-                })
-                .eq('handle', user.handle);
+                if (insertError) {
+                    console.error('[Supabase] Ошибка при сохранении брака:', insertError);
+                }
 
-            // Обновляем статус ПАРТНЁРА тоже!
-            const partnerStatus = `В союзе с @${user.handle}`;
-            await supabase
-                .from('profiles')
-                .update({ status: partnerStatus })
-                .eq('handle', activeWedding.partner);
-
-            // Начисляем партнёру Silk
-            const { data: partnerProfile } = await supabase
-                .from('profiles')
-                .select('silk')
-                .eq('handle', activeWedding.partner)
-                .maybeSingle();
-
-            if (partnerProfile) {
+                // Обновляем статус текущего пользователя
+                const newStatus = `В союзе с @${activeWedding.partner}`;
                 await supabase
                     .from('profiles')
-                    .update({ silk: (partnerProfile.silk || 0) + 50 })
+                    .update({
+                        status: newStatus,
+                        silk: user.silk + 50
+                    })
+                    .eq('handle', user.handle);
+
+                // Обновляем статус ПАРТНЁРА тоже!
+                const partnerStatus = `В союзе с @${user.handle}`;
+                await supabase
+                    .from('profiles')
+                    .update({ status: partnerStatus })
                     .eq('handle', activeWedding.partner);
+
+                // Начисляем партнёру Silk
+                const { data: partnerProfile } = await supabase
+                    .from('profiles')
+                    .select('silk')
+                    .eq('handle', activeWedding.partner)
+                    .maybeSingle();
+
+                if (partnerProfile) {
+                    await supabase
+                        .from('profiles')
+                        .update({ silk: (partnerProfile.silk || 0) + 50 })
+                        .eq('handle', activeWedding.partner);
+                }
+
+                setMarriages([{
+                    id: newMarriage?.id || Date.now(),
+                    partner: activeWedding.partner,
+                    partnerAvatar: activeWedding.partnerAvatar,
+                    date: activeWedding.date,
+                    style: activeWedding.style,
+                    ring_id: activeWedding.ringId || 'basic'
+                }, ...marriages]);
+
+                setUser(prev => ({
+                    ...prev,
+                    status: newStatus,
+                    silk: prev.silk + 50
+                }));
+
+                // Отправляем TG-уведомление партнёру о свадьбе
+                notifyMarriage(activeWedding.partner, user.handle);
+
+                setCurrentScreen('certificate');
+            } finally {
+                setIsPerformingWedding(false);
             }
-
-            setMarriages([{
-                id: newMarriage?.id || Date.now(),
-                partner: activeWedding.partner,
-                partnerAvatar: activeWedding.partnerAvatar,
-                date: activeWedding.date,
-                style: activeWedding.style
-            }, ...marriages]);
-
-            setUser(prev => ({
-                ...prev,
-                status: newStatus,
-                silk: prev.silk + 50
-            }));
-
-            // Отправляем TG-уведомление партнёру о свадьбе
-            notifyMarriage(activeWedding.partner, user.handle);
-
-            setCurrentScreen('certificate');
         }
     };
 
@@ -396,6 +429,81 @@ export const AppProvider = ({ children }) => {
         }
     };
 
+    const divorce = async (marriageId) => {
+        try {
+            console.log(`[Supabase] Попытка развода для брака ID: ${marriageId}`);
+            // Удаляем запись о браке из БД
+            const { error } = await supabase.from('marriages').delete().eq('id', marriageId);
+
+            if (error) {
+                console.error('[Supabase] Ошибка при разводе:', error);
+                alert('Не удалось расторгнуть брак. Возможно, он уже расторгнут.');
+                return;
+            }
+
+            // Обновляем локальный стейт
+            const remainingMarriages = marriages.filter(m => m.id !== marriageId);
+            setMarriages(remainingMarriages);
+
+            // Обновляем статус: если остались другие браки (полиамория) – ставим имя другого партнера, иначе "Свободен"
+            let newStatus = 'Свободен';
+            if (remainingMarriages.length > 0) {
+                newStatus = `В союзе с @${remainingMarriages[0].partner}`;
+            }
+            await updateUser({ status: newStatus });
+
+            setCurrentScreen('divorce'); // Переход на экран разбитого сертификата
+        } catch (err) {
+            console.error('[Supabase] Критическая ошибка при разводе:', err);
+        }
+    };
+
+    const openPassport = (handle) => {
+        setViewingHandle(handle);
+        setCurrentScreen('passport');
+    };
+
+    const boostHype = async (marriageId) => {
+        if (!user) return { success: false, error: 'Нужна авторизация' };
+
+        // 1. Проверяем, голосовал ли уже этот юзер за этот брак
+        const { data: existingVote } = await supabase
+            .from('marriage_votes')
+            .select('id')
+            .eq('marriage_id', marriageId)
+            .eq('voter_handle', user.handle)
+            .maybeSingle();
+
+        if (existingVote) {
+            return { success: false, error: 'Вы уже поддержали эту пару!' };
+        }
+
+        // 2. Регистрируем голос
+        const { error: voteError } = await supabase
+            .from('marriage_votes')
+            .insert({
+                marriage_id: marriageId,
+                voter_handle: user.handle
+            });
+
+        if (voteError) return { success: false, error: 'Ошибка голосования' };
+
+        // 3. Увеличиваем счетчик в таблице marriages (с помощью RPC или инкремента)
+        // Для простоты используем инкремент через update, но в идеале нужен RPC
+        const { data: marriage } = await supabase
+            .from('marriages')
+            .select('hype_score')
+            .eq('id', marriageId)
+            .single();
+
+        await supabase
+            .from('marriages')
+            .update({ hype_score: (marriage.hype_score || 0) + 1 })
+            .eq('id', marriageId);
+
+        return { success: true };
+    };
+
     return (
         <AppContext.Provider value={{
             user, setUser,
@@ -405,7 +513,9 @@ export const AppProvider = ({ children }) => {
             receivedProposals, sentProposals,
             activeWedding, startWedding, completeWedding,
             sendProposal, acceptProposal, rejectProposal,
-            login, updateUser, logout
+            login, updateUser, logout, divorce,
+            viewingHandle, setViewingHandle, openPassport, boostHype,
+            ensureSafeAvatar
         }}>
             {children}
         </AppContext.Provider>

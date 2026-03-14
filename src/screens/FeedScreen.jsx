@@ -5,7 +5,7 @@ import { Heart, Globe, Loader2 } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 
 const FeedScreen = () => {
-    const { user } = useApp();
+    const { user, openPassport, ensureSafeAvatar } = useApp();
     const [feed, setFeed] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -18,12 +18,27 @@ const FeedScreen = () => {
                     .order('created_at', { ascending: false })
                     .limit(20);
 
-                const items = (marriages || []).map(m => ({
-                    id: m.id,
-                    type: 'marriage',
-                    partners: [m.partner_a, m.partner_b],
-                    date: new Date(m.created_at).toLocaleDateString('ru-RU'),
-                    style: m.wedding_style || 'Classic'
+                const seenPair = new Set();
+                const uniqueMarriages = (marriages || []).filter(m => {
+                    const pair = [m.partner_a, m.partner_b].sort().join(':');
+                    if (seenPair.has(pair)) return false;
+                    seenPair.add(pair);
+                    return true;
+                });
+
+                const items = await Promise.all(uniqueMarriages.map(async m => {
+                    const { data: pA } = await supabase.from('profiles').select('avatar_url').eq('handle', m.partner_a).maybeSingle();
+                    const { data: pB } = await supabase.from('profiles').select('avatar_url').eq('handle', m.partner_b).maybeSingle();
+
+                    return {
+                        id: m.id,
+                        type: 'marriage',
+                        partners: [m.partner_a, m.partner_b],
+                        avatar_a: ensureSafeAvatar(pA?.avatar_url),
+                        avatar_b: ensureSafeAvatar(pB?.avatar_url),
+                        date: new Date(m.created_at).toLocaleDateString('ru-RU'),
+                        style: m.wedding_style || 'Classic'
+                    };
                 }));
 
                 setFeed(items);
@@ -69,20 +84,28 @@ const FeedScreen = () => {
                             className="cyber-card"
                             style={{ padding: '1.5rem', border: '1px solid rgba(0, 242, 255, 0.15)' }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                                    <span style={{ fontSize: '0.65rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.6 }}>
-                                        Заключен союз
-                                    </span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <div
+                                        onClick={() => openPassport(item.partners[0])}
+                                        style={{ width: '45px', height: '45px', borderRadius: '15px', border: '2px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer' }}
+                                    >
+                                        <img src={item.avatar_a || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.partners[0]}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar A" />
+                                    </div>
+                                    <div
+                                        onClick={() => openPassport(item.partners[1])}
+                                        style={{ width: '45px', height: '45px', borderRadius: '15px', border: '2px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer' }}
+                                    >
+                                        <img src={item.avatar_b || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.partners[1]}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar B" />
+                                    </div>
                                 </div>
-                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.date}</span>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '1rem' }}>
-                                <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>@{item.partners[0]}</span>
-                                <Heart size={18} fill="var(--accent-neon)" color="var(--accent-neon)" />
-                                <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>@{item.partners[1]}</span>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                        <span onClick={() => openPassport(item.partners[0])} style={{ cursor: 'pointer', color: 'var(--accent-neon)' }}>@{item.partners[0]}</span> +
+                                        <span onClick={() => openPassport(item.partners[1])} style={{ cursor: 'pointer', color: 'var(--accent-neon)' }}> @{item.partners[1]}</span>
+                                    </div>
+                                    <div style={{ fontSize: '0.6rem', opacity: 0.5, textTransform: 'uppercase' }}>{item.date}</div>
+                                </div>
                             </div>
 
                             <div style={{

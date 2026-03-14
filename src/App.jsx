@@ -11,7 +11,8 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Heart, User, BarChart3, Settings, Globe } from 'lucide-react';
 import SettingsScreen from './screens/SettingsScreen';
-import FeedScreen from './screens/FeedScreen'; // New
+import FeedScreen from './screens/FeedScreen';
+import DivorceScreen from './screens/DivorceScreen';
 import { motion } from 'framer-motion';
 
 const NavIcon = ({ currentScreen, screen, Icon, setCurrentScreen, activeColor = 'var(--accent-neon)' }) => (
@@ -88,6 +89,7 @@ function AppContent() {
         {currentScreen === 'feed' && <FeedScreen key="feed" />}
         {currentScreen === 'settings' && <SettingsScreen key="settings" />}
         {currentScreen === 'certificate' && <CertificateScreen key="certificate" />}
+        {currentScreen === 'divorce' && <DivorceScreen key="divorce" />}
       </AnimatePresence>
 
       {showNavbar && (

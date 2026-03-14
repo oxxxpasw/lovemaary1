@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { ArrowLeft, User, LogOut, Bell, BellOff, Shield, HelpCircle, ChevronRight, Heart, Sparkles, Crown } from 'lucide-react';
+import { ArrowLeft, User, LogOut, Bell, BellOff, ChevronRight, Heart, Sparkles, Crown } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 
 const SettingsScreen = () => {
@@ -230,34 +230,6 @@ const SettingsScreen = () => {
                     </div>
                 </div>
 
-                {/* Дополнительно */}
-                <div>
-                    <h3 style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.8rem', paddingLeft: '5px' }}>
-                        Дополнительно
-                    </h3>
-                    <div className="cyber-card" style={{ padding: '5px' }}>
-                        <motion.div
-                            whileTap={{ background: 'rgba(255,255,255,0.05)' }}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 15px', borderRadius: '15px', cursor: 'pointer' }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <Shield size={20} color="#a855f7" />
-                                <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>Приватность</span>
-                            </div>
-                            <ChevronRight size={16} color="var(--text-muted)" style={{ opacity: 0.3 }} />
-                        </motion.div>
-                        <motion.div
-                            whileTap={{ background: 'rgba(255,255,255,0.05)' }}
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 15px', borderRadius: '15px', cursor: 'pointer' }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <HelpCircle size={20} color="#10b981" />
-                                <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>Поддержка</span>
-                            </div>
-                            <ChevronRight size={16} color="var(--text-muted)" style={{ opacity: 0.3 }} />
-                        </motion.div>
-                    </div>
-                </div>
 
                 {/* Выход */}
                 <motion.button

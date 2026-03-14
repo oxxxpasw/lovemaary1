@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, Search, User, BarChart3, Settings, Loader2, Sparkles } from 'lucide-react';
+import { Heart, User, BarChart3, Settings, Loader2, Sparkles } from 'lucide-react';
 import { performFileAuth } from '../utils/AuthManager';
 
 const Dashboard = () => {
     const {
         user, setUser, setCurrentScreen,
         sendProposal, receivedProposals, acceptProposal, rejectProposal,
-        sentProposals, updateUser, logout
+        sentProposals, updateUser, logout, ensureSafeAvatar
     } = useApp();
-    const [searchQuery, setSearchQuery] = useState('');
     const [showProposalModal, setShowProposalModal] = useState(false);
     const [partnerHandle, setPartnerHandle] = useState('');
     const [isProposing, setIsProposing] = useState(false);
     const [showSentSuccess, setShowSentSuccess] = useState(false);
+    const [selectedRing, setSelectedRing] = useState('basic');
+    const [proposalError, setProposalError] = useState('');
+
+    const ringOptions = [
+        { id: 'basic', name: 'Базовое', price: 0, color: '#fff' },
+        { id: 'diamond', name: 'Алмазное', price: 300, color: '#00f2ff' },
+        { id: 'neon', name: 'Неоновое', price: 500, color: '#ff2d55' }
+    ];
 
     const roles = ['Моногам', 'Серийный жених', 'Дикий шиппер', 'Хаос-друг', 'Призрачный партнер'];
 
@@ -48,7 +55,7 @@ const Dashboard = () => {
                     }}
                 >
                     <div style={{ width: '52px', height: '52px', borderRadius: '18px', overflow: 'hidden', background: '#000' }}>
-                        <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                 </motion.div>
             </div>
@@ -95,33 +102,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Futuristic Search */}
-            <div style={{ position: 'relative', marginBottom: '2.5rem' }}>
-                <div style={{
-                    position: 'absolute', inset: 0,
-                    background: 'var(--grad-neon)', opacity: 0.05,
-                    borderRadius: '24px', filter: 'blur(5px)'
-                }} />
-                <Search style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent-neon)', opacity: 0.6 }} size={20} />
-                <input
-                    type="text"
-                    placeholder="Найти вторую половину..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                        width: '100%',
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        padding: '18px 18px 18px 54px',
-                        borderRadius: '24px',
-                        color: 'white',
-                        fontSize: '1rem',
-                        position: 'relative',
-                        zIndex: 1,
-                        outline: 'none'
-                    }}
-                />
-            </div>
+
 
             {/* Actions Grid - Refined */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '3rem' }}>
@@ -237,7 +218,7 @@ const Dashboard = () => {
                                 type="text"
                                 placeholder="@username"
                                 value={partnerHandle}
-                                onChange={(e) => setPartnerHandle(e.target.value)}
+                                onChange={(e) => { setPartnerHandle(e.target.value); setProposalError(''); }}
                                 style={{
                                     width: '100%',
                                     background: 'rgba(255,255,255,0.03)',
@@ -252,6 +233,49 @@ const Dashboard = () => {
                             />
                         </div>
 
+                        {/* Выбор кольца */}
+                        <div style={{ marginBottom: '2rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Кольцо (Символ вашего союза):</p>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--accent-neon)', fontWeight: 'bold' }}>Ваш баланс: {user?.silk || 0} Silk</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                {ringOptions.map(ring => {
+                                    const userSilk = Number(user?.silk) || 0;
+                                    const canAfford = userSilk >= ring.price || ring.price === 0;
+                                    const isSelected = selectedRing === ring.id;
+                                    return (
+                                        <div
+                                            key={ring.id}
+                                            onClick={() => { if (canAfford) setSelectedRing(ring.id) }}
+                                            style={{
+                                                flex: 1,
+                                                padding: '12px 5px',
+                                                borderRadius: '16px',
+                                                border: `1px solid ${isSelected ? ring.color : 'rgba(255,255,255,0.1)'}`,
+                                                background: isSelected ? 'rgba(255,255,255,0.05)' : 'transparent',
+                                                textAlign: 'center',
+                                                cursor: canAfford ? 'pointer' : 'not-allowed',
+                                                opacity: canAfford ? 1 : 0.4,
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <div style={{ fontSize: '0.85rem', fontWeight: '800', color: isSelected ? ring.color : 'white' }}>{ring.name}</div>
+                                            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                                                {ring.price === 0 ? 'Бесплатно' : `${ring.price} Silk`}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        {proposalError && (
+                            <div style={{ color: '#ff2d55', fontSize: '0.85rem', marginBottom: '1.5rem', textAlign: 'center', background: 'rgba(255,45,85,0.1)', padding: '10px', borderRadius: '12px' }}>
+                                {proposalError}
+                            </div>
+                        )}
+
                         <div style={{ display: 'flex', gap: '12px' }}>
                             <motion.button whileTap={{ scale: 0.95 }} className="btn-ghost" style={{ flex: 1, borderRadius: '18px', height: '56px' }} onClick={() => setShowProposalModal(false)}>Назад</motion.button>
                             <motion.button
@@ -261,13 +285,34 @@ const Dashboard = () => {
                                 disabled={isProposing}
                                 onClick={async () => {
                                     if (partnerHandle) {
+                                        setProposalError('');
                                         setIsProposing(true);
                                         const result = await performFileAuth(partnerHandle);
-                                        sendProposal(result.data);
+
+                                        const ring = ringOptions.find(r => r.id === selectedRing);
+                                        if (ring.price > 0 && user.silk < ring.price) {
+                                            setProposalError('Недостаточно Silk для этого кольца.');
+                                            setIsProposing(false);
+                                            return;
+                                        }
+
+                                        const sendResult = await sendProposal({ ...result.data, ringId: selectedRing });
+
                                         setIsProposing(false);
-                                        setShowProposalModal(false);
-                                        setShowSentSuccess(true);
-                                        setTimeout(() => setShowSentSuccess(false), 3000);
+
+                                        if (sendResult.success) {
+                                            // Списываем Silk за кольцо
+                                            if (ring.price > 0) {
+                                                await updateUser({ silk: user.silk - ring.price });
+                                            }
+                                            setShowProposalModal(false);
+                                            setShowSentSuccess(true);
+                                            setPartnerHandle('');
+                                            setSelectedRing('basic');
+                                            setTimeout(() => setShowSentSuccess(false), 3000);
+                                        } else {
+                                            setProposalError(sendResult.error || 'Ошибка при отправке.');
+                                        }
                                     }
                                 }}
                             >
