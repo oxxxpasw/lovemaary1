@@ -76,24 +76,38 @@ const ShipScreen = () => {
             className="screen ships"
             style={{ paddingTop: '110px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '2.5rem' }}>
+            {/* Header with improved alignment */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '3rem', position: 'relative', zIndex: 10 }}>
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setCurrentScreen('dashboard')}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', width: '48px', height: '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: 'white',
+                        width: '52px', height: '52px',
+                        borderRadius: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                    }}
                 >
                     <ArrowLeft size={24} />
                 </motion.button>
-                <div>
-                    <h1 style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.04em' }}>Platinum <span className="text-gradient">Ships</span></h1>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '4px' }}>Элита цифровых союзов</p>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <h1 style={{ fontSize: '2.4rem', fontWeight: '900', letterSpacing: '-0.05em', lineHeight: 1, margin: 0 }}>
+                        Platinum <span className="text-gradient" style={{ filter: 'drop-shadow(0 0 15px rgba(0, 242, 255, 0.3))' }}>Ships</span>
+                    </h1>
+                    <p style={{ color: 'var(--accent-neon)', fontSize: '0.65rem', fontWeight: '800', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: '6px', opacity: 0.8 }}>Элита цифровых союзов</p>
                 </div>
             </div>
 
             {isLoading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}><div className="animate-spin"><Sparkles size={32} /></div></div>
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}>
+                    <Loader2 className="animate-spin" size={48} color="var(--accent-neon)" />
+                </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {topShips.map((ship, index) => (
                         <motion.div
                             key={ship.id}
@@ -102,60 +116,100 @@ const ShipScreen = () => {
                             transition={{ delay: index * 0.05 }}
                             className="glass-panel"
                             style={{
-                                padding: '1.5rem',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
-                                borderRadius: '25px',
-                                background: index < 3 ? 'rgba(0, 242, 255, 0.03)' : 'var(--bg-panel)'
+                                padding: '1.8rem',
+                                border: '1px solid rgba(0, 242, 255, 0.15)',
+                                borderRadius: '30px',
+                                background: index < 3
+                                    ? 'linear-gradient(135deg, rgba(0, 242, 255, 0.08) 0%, rgba(5, 10, 15, 0.95) 100%)'
+                                    : 'rgba(5, 10, 15, 0.8)',
+                                boxShadow: index < 3 ? '0 20px 40px rgba(0, 242, 255, 0.1)' : '0 15px 30px rgba(0,0,0,0.4)',
+                                position: 'relative',
+                                overflow: 'hidden'
                             }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            {/* Decorative Rank background */}
+                            <div style={{
+                                position: 'absolute', right: '-10px', top: '-10px',
+                                fontSize: '6rem', fontWeight: '900', color: 'var(--accent-neon)',
+                                opacity: 0.03, pointerEvents: 'none'
+                            }}>
+                                #{index + 1}
+                            </div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                    {/* Rank Badge */}
                                     <div style={{
-                                        fontSize: '1.5rem', fontWeight: '900', color: index < 3 ? 'var(--accent-neon)' : 'rgba(255,255,255,0.2)',
-                                        width: '40px', textAlign: 'center'
+                                        fontSize: '1.2rem', fontWeight: '900',
+                                        color: index < 3 ? 'var(--accent-neon)' : 'rgba(255,255,255,0.3)',
+                                        width: '45px', height: '45px', borderRadius: '50%',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        background: index < 3 ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255,255,255,0.03)',
+                                        border: `1px solid ${index < 3 ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255,255,255,0.05)'}`
                                     }}>
                                         #{index + 1}
                                     </div>
+
+                                    {/* Avatars Overlap */}
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ width: '50px', height: '50px', borderRadius: '15px', border: '2px solid var(--accent-neon)', overflow: 'hidden', zIndex: 2, background: '#000' }}>
-                                            <img src={ship.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <div style={{
+                                            width: '64px', height: '64px', borderRadius: '22px',
+                                            border: '2px solid var(--accent-neon)', overflow: 'hidden',
+                                            zIndex: 5, background: '#000', padding: '1.5px',
+                                            boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
+                                        }}>
+                                            <img src={ship.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '19px' }} />
                                         </div>
-                                        <div style={{ width: '50px', height: '50px', borderRadius: '15px', border: '2px solid var(--accent-hot)', overflow: 'hidden', marginLeft: '-15px', zIndex: 1, background: '#000' }}>
-                                            <img src={ship.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <div style={{
+                                            width: '64px', height: '64px', borderRadius: '22px',
+                                            border: '2px solid var(--accent-hot)', overflow: 'hidden',
+                                            marginLeft: '-20px', zIndex: 4, background: '#000', padding: '1.5px',
+                                            boxShadow: '0 0 15px rgba(255, 45, 85, 0.2)'
+                                        }}>
+                                            <img src={ship.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '19px' }} />
                                         </div>
                                     </div>
+
+                                    {/* Text Info */}
                                     <div>
-                                        <div style={{ fontWeight: '900', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>
-                                            @{ship.partner_a} <span style={{ color: 'rgba(255,255,255,0.3)' }}>&</span> @{ship.partner_b}
+                                        <div style={{ fontWeight: '900', fontSize: '1.2rem', letterSpacing: '-0.02em', color: 'white' }}>
+                                            @{ship.partner_a} <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1rem' }}>&</span> @{ship.partner_b}
                                         </div>
-                                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                            Level: Platinum {ship.wedding_style}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
+                                            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                                {ship.wedding_style || 'Cyber Union'}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Hot Button */}
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => handleBoost(ship.id)}
                                     disabled={votingId === ship.id}
                                     style={{
-                                        background: 'rgba(255, 45, 85, 0.1)',
-                                        border: '1px solid rgba(255, 45, 85, 0.3)',
-                                        padding: '10px 15px',
-                                        borderRadius: '16px',
+                                        background: 'linear-gradient(to bottom, rgba(255, 45, 85, 0.15), rgba(255, 45, 85, 0.05))',
+                                        border: '1px solid rgba(255, 45, 85, 0.4)',
+                                        padding: '12px 20px',
+                                        borderRadius: '20px',
                                         color: 'var(--accent-hot)',
                                         display: 'flex',
+                                        flexDirection: 'column',
                                         alignItems: 'center',
-                                        gap: '8px',
-                                        cursor: 'pointer'
+                                        gap: '4px',
+                                        cursor: 'pointer',
+                                        minWidth: '70px',
+                                        backdropFilter: 'blur(5px)'
                                     }}
                                 >
                                     {votingId === ship.id ? (
-                                        <Loader2 className="animate-spin" size={16} />
+                                        <Loader2 className="animate-spin" size={18} />
                                     ) : (
-                                        <Flame size={16} fill="currentColor" />
+                                        <Flame size={20} fill="currentColor" />
                                     )}
-                                    <span style={{ fontWeight: '900', fontSize: '1rem' }}>{ship.hype_score || 0}</span>
+                                    <span style={{ fontWeight: '900', fontSize: '1.1rem' }}>{ship.hype_score || 0}</span>
                                 </motion.button>
                             </div>
                         </motion.div>

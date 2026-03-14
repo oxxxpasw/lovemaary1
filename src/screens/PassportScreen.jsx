@@ -115,45 +115,53 @@ const PassportScreen = () => {
             className="screen passport"
             style={{ paddingTop: '110px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
-            <div style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontSize: '0.7rem', opacity: 0.5, letterSpacing: '0.3em' }}>DIGITAL PASSPORT</h2>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: 'bold' }}>{passportId}</span>
-                </div>
-
-                {/* Поиск профиля */}
-                <form onSubmit={handleSearch} style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                    <input
-                        type="text"
-                        placeholder="Найти по @username..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{
-                            width: '100%',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '15px',
-                            padding: '12px 45px 12px 15px',
-                            color: 'white',
-                            fontSize: '0.9rem',
-                            outline: 'none'
-                        }}
-                    />
-                    <button type="submit" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--accent-neon)' }}>
-                        <Search size={18} />
-                    </button>
-                </form>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-                    <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => { setViewingHandle(null); setCurrentScreen('dashboard'); }}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        <ArrowLeft size={24} />
-                    </motion.button>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.04em' }}>{isOwnPassport ? 'Личный профиль' : `Профиль @${viewingHandle}`}</h1>
+            {/* Premium Header with Back Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2.5rem', position: 'relative', zIndex: 10 }}>
+                <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => { setViewingHandle(null); setCurrentScreen('dashboard'); }}
+                    style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: 'white',
+                        width: '52px', height: '52px',
+                        borderRadius: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backdropFilter: 'blur(10px)'
+                    }}
+                >
+                    <ArrowLeft size={24} />
+                </motion.button>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h2 style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: '900', letterSpacing: '0.3rem', textTransform: 'uppercase', marginBottom: '4px' }}>Digital Passport</h2>
+                    <h1 className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.05em', lineHeight: 1 }}>
+                        {isOwnPassport ? 'Личный профиль' : `@${viewingHandle}`}
+                    </h1>
                 </div>
             </div>
+
+            {/* Futuristic Search Field */}
+            <form onSubmit={handleSearch} style={{ position: 'relative', marginBottom: '2.5rem', zIndex: 10 }}>
+                <Search style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', opacity: 0.3 }} size={20} />
+                <input
+                    type="text"
+                    placeholder="Найти профиль..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                        width: '100%',
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        padding: '20px 20px 20px 58px',
+                        borderRadius: '24px',
+                        color: 'white',
+                        fontSize: '1rem',
+                        fontWeight: '700',
+                        outline: 'none',
+                        transition: 'all 0.3s'
+                    }}
+                />
+            </form>
 
             {!viewedUser && !isLoading ? (
                 <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', opacity: 0.5 }}>
@@ -162,134 +170,151 @@ const PassportScreen = () => {
                 </div>
             ) : (
                 <>
-                    {/* The Digital Card - Classic Federation Style */}
+                    {/* The Digital Card - Platinum Federation Style */}
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="passport-card"
+                        className="glass-panel"
                         style={{
-                            padding: '1.8rem 1.5rem',
-                            marginBottom: '2.5rem',
-                            borderRadius: '30px',
-                            background: 'rgba(5, 10, 15, 0.8)',
-                            border: '1px solid rgba(0, 242, 255, 0.2)',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                            padding: '2.5rem 2rem',
+                            marginBottom: '3rem',
+                            borderRadius: '40px',
+                            background: 'linear-gradient(145deg, rgba(5, 10, 15, 0.98) 0%, rgba(10, 20, 30, 0.95) 100%)',
+                            border: '1.5px solid rgba(0, 242, 255, 0.3)',
+                            boxShadow: '0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.1)',
                             position: 'relative',
                             overflow: 'hidden'
                         }}
                     >
-                        {/* Background Heart Decoration */}
-                        <div style={{ position: 'absolute', right: '-20px', bottom: '-10px', opacity: 0.1, pointerEvents: 'none' }}>
-                            <Heart size={160} color="var(--accent-neon)" strokeWidth={1} />
+                        {/* Background Decoration */}
+                        <div style={{ position: 'absolute', right: '-30px', bottom: '-20px', opacity: 0.05, pointerEvents: 'none', color: 'var(--accent-neon)' }}>
+                            <ShieldAlert size={220} />
                         </div>
 
-                        {/* Top Header Row */}
+                        {/* Card Header */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 10px var(--accent-neon)' }} />
-                                <span style={{ fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>THREADS FEDERATION</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div className="animate-pulse" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 15px var(--accent-neon)' }} />
+                                <span style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>Threads ID System</span>
                             </div>
-                            <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--accent-neon)', fontFamily: 'monospace' }}>{passportId}</span>
+                            <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.1em' }}>{passportId}</div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '25px', position: 'relative', zIndex: 2 }}>
-                            {/* Avatar Column */}
+                        <div style={{ display: 'flex', gap: '30px', position: 'relative', zIndex: 2, alignItems: 'flex-start' }}>
+                            {/* Avatar Section */}
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+                                <motion.div
+                                    whileHover={{ scale: 1.05, rotate: 5 }}
+                                    style={{
+                                        width: '120px', height: '120px', borderRadius: '35px', overflow: 'hidden',
+                                        border: '2.5px solid var(--accent-neon)', padding: '2px', background: '#000',
+                                        boxShadow: '0 0 30px rgba(0, 242, 255, 0.3)'
+                                    }}
+                                >
+                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '31px' }} />
+                                </motion.div>
                                 <div style={{
-                                    width: '110px', height: '110px', borderRadius: '30px', overflow: 'hidden',
-                                    border: '2px solid var(--accent-neon)', padding: '2px', background: 'black'
+                                    background: 'rgba(0, 242, 255, 0.15)', color: 'var(--accent-neon)',
+                                    fontSize: '0.65rem', fontWeight: '900', padding: '6px 18px',
+                                    borderRadius: '12px', border: '1px solid rgba(0, 242, 255, 0.3)',
+                                    textTransform: 'uppercase', letterSpacing: '0.15em'
                                 }}>
-                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '26px' }} />
-                                </div>
-                                <div style={{
-                                    background: 'var(--accent-neon)', color: 'black',
-                                    fontSize: '0.65rem', fontWeight: '900', padding: '5px 15px',
-                                    borderRadius: '8px', boxShadow: '0 5px 15px rgba(0, 242, 255, 0.3)',
-                                    textTransform: 'uppercase', letterSpacing: '0.05em'
-                                }}>
-                                    VERIFIED
+                                    Verified Union
                                 </div>
                             </div>
 
-                            {/* Info Column */}
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            {/* Info Section */}
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 <div>
-                                    <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>NAME / НИКНЕЙМ</p>
-                                    <h3 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white', margin: 0 }}>
+                                    <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Registry Handle</p>
+                                    <h3 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.04em', color: 'white', lineHeight: 1 }}>
                                         @{viewedUser.handle}
                                     </h3>
                                 </div>
 
-                                <div>
-                                    <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>STATUS / СТАТУС</p>
-                                    <p style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--accent-neon)', margin: 0 }}>{viewedUser.status || 'Active'}</p>
-                                </div>
-
-                                <div style={{ display: 'flex', gap: '30px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                                     <div>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>UNIONS / СОЮЗЫ</p>
-                                        <p style={{ fontSize: '1.2rem', fontWeight: '900', color: 'white', margin: 0 }}>{viewedMarriages.length}</p>
+                                        <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Status</p>
+                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser.status || 'Active'}</p>
                                     </div>
                                     <div>
-                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>EXP / СРОК</p>
-                                        <p style={{ fontSize: '0.9rem', fontWeight: '800', color: 'white', margin: 0 }}>FOREVER</p>
+                                        <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Role</p>
+                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'white' }}>{viewedUser.role}</p>
+                                    </div>
+                                </div>
+
+                                <div style={{ marginTop: '10px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: 0.6 }}>
+                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
+                                        <span style={{ fontSize: '0.65rem', color: 'white', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Security Level: Platinum</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Anniversary Log */}
+                    {/* Anniversary Log - Premium History Feed */}
                     <div style={{ position: 'relative' }}>
-                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
-                            <HistoryIcon size={22} color="var(--accent-neon)" /> Журнал союзов
-                        </h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '2rem', paddingLeft: '5px' }}>
+                            <div style={{ padding: '10px', borderRadius: '14px', background: 'rgba(0, 242, 255, 0.1)', color: 'var(--accent-neon)' }}>
+                                <HistoryIcon size={22} />
+                            </div>
+                            <h3 style={{ fontSize: '1.2rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white' }}>Журнал союзов</h3>
+                        </div>
 
                         {viewedMarriages.length === 0 ? (
-                            <div className="glass-panel" style={{ textAlign: 'center', opacity: 0.3, padding: '3rem', borderRadius: '24px' }}>
-                                <Sparkles size={32} style={{ marginBottom: '1rem', opacity: 0.5, color: 'var(--accent-neon)' }} />
-                                <p style={{ fontSize: '0.9rem' }}>Ваш журнал пуст.<br />Время создать историю.</p>
+                            <div className="glass-panel" style={{ textAlign: 'center', opacity: 0.4, padding: '4rem 2rem', borderRadius: '35px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                <Sparkles size={40} style={{ marginBottom: '1.5rem', opacity: 0.3, color: 'var(--accent-neon)', marginLeft: 'auto', marginRight: 'auto' }} />
+                                <p style={{ fontSize: '1rem', fontWeight: '800', letterSpacing: '-0.01em' }}>Архивы пусты.</p>
+                                <p style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '5px' }}>Время создать историю.</p>
                             </div>
                         ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                 {viewedMarriages.map((m, i) => (
                                     <motion.div
                                         key={m.id}
-                                        initial={{ opacity: 0, y: 10 }}
+                                        initial={{ opacity: 0, y: 15 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: i * 0.1 }}
                                         onClick={() => !isOwnPassport && openPassport(m.partner)}
                                         className="glass-panel"
                                         style={{
-                                            padding: '1.2rem',
-                                            borderRadius: '20px',
+                                            padding: '2rem',
+                                            borderRadius: '32px',
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
                                             cursor: !isOwnPassport ? 'pointer' : 'default',
-                                            border: '1px solid rgba(255, 255, 255, 0.05)'
+                                            border: '1.5px solid rgba(255, 255, 255, 0.08)',
+                                            background: 'linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+                                            boxShadow: '0 15px 30px rgba(0,0,0,0.3)'
                                         }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '45px', height: '45px', borderRadius: '50%', border: '1px solid var(--accent-neon)', overflow: 'hidden', padding: '1px' }}>
-                                                <img src={m.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.partner}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                            <div style={{
+                                                width: '60px', height: '60px', borderRadius: '20px',
+                                                border: '2px solid var(--accent-neon)', overflow: 'hidden',
+                                                padding: '1.5px', background: '#000',
+                                                boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
+                                            }}>
+                                                <img src={m.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.partner}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '17px' }} />
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: '900', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px', letterSpacing: '-0.02em' }}>
+                                                <div style={{ fontWeight: '900', fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.03em' }}>
                                                     @{m.partner}
-                                                    {m.ring_id === 'diamond' && <span style={{ fontSize: '1rem' }}>💎</span>}
-                                                    {m.ring_id === 'neon' && <span style={{ fontSize: '1rem' }}>🔥</span>}
-                                                    {m.ring_id === 'basic' && <span style={{ fontSize: '1rem' }}>💍</span>}
+                                                    {m.ring_id === 'diamond' && <span style={{ fontSize: '1.2rem', filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.5))' }}>💎</span>}
+                                                    {m.ring_id === 'neon' && <span style={{ fontSize: '1.2rem' }}>🔥</span>}
+                                                    {m.ring_id === 'basic' && <span style={{ fontSize: '1.2rem' }}>💍</span>}
                                                 </div>
-                                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: '600' }}>
-                                                    {m.style} • <span style={{ color: 'var(--accent-hot)' }}>Hype: {m.hype_score}</span>
+                                                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+                                                    {m.style} • <span style={{ color: 'var(--accent-hot)' }}>Hype {m.hype_score}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                                             <div style={{ textAlign: 'right' }}>
-                                                <div style={{ fontSize: '0.85rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{m.date}</div>
-                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: '800' }}>Confirmed</div>
+                                                <div style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.05em' }}>{m.date}</div>
+                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>Established</div>
                                             </div>
 
                                             {isOwnPassport && (
@@ -301,9 +326,13 @@ const PassportScreen = () => {
                                                             divorce(m.id);
                                                         }
                                                     }}
-                                                    style={{ background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.3)', padding: '10px', borderRadius: '15px', color: '#ff2d55', cursor: 'pointer' }}
+                                                    style={{
+                                                        width: '48px', height: '48px', borderRadius: '16px',
+                                                        background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.2)',
+                                                        color: '#ff2d55', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                    }}
                                                 >
-                                                    <XOctagon size={18} />
+                                                    <XOctagon size={20} />
                                                 </motion.button>
                                             )}
                                         </div>

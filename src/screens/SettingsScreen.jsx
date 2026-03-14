@@ -93,32 +93,72 @@ const SettingsScreen = () => {
             className="screen"
             style={{ paddingTop: '110px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingTop: '1rem' }}>
+            {/* Premium Header with Back Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2.5rem', position: 'relative', zIndex: 10 }}>
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setCurrentScreen('dashboard')}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: 'white',
+                        width: '52px', height: '52px',
+                        borderRadius: '18px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        backdropFilter: 'blur(10px)'
+                    }}
                 >
                     <ArrowLeft size={24} />
                 </motion.button>
-                <h1 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0 }}>Настройки</h1>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h2 style={{ fontSize: '0.65rem', color: 'var(--accent-neon)', fontWeight: '900', letterSpacing: '0.3rem', textTransform: 'uppercase', marginBottom: '4px', opacity: 0.8 }}>System Core</h2>
+                    <h1 className="text-gradient glow-text" style={{ fontSize: '2.4rem', fontWeight: '900', letterSpacing: '-0.05em', lineHeight: 1 }}>Настройки</h1>
+                </div>
             </div>
 
-            {/* User Card */}
+            {/* User Profile Summary Card */}
             {user && (
-                <div className="cyber-card" style={{ padding: '1.2rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '56px', height: '56px', borderRadius: '20px', overflow: 'hidden', border: '2px solid var(--accent-neon)', flexShrink: 0 }}>
-                        <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className="glass-panel"
+                    style={{
+                        padding: '1.8rem',
+                        marginBottom: '3rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px',
+                        borderRadius: '32px',
+                        border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(5, 10, 15, 0.95) 100%)',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}
+                >
+                    <div style={{ position: 'absolute', right: '-10px', top: '-10px', opacity: 0.03, color: 'var(--accent-neon)', pointerEvents: 'none' }}>
+                        <User size={120} />
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: '900', fontSize: '1.1rem' }}>@{user.handle}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user.status || 'Свободен'}</div>
+
+                    <div style={{
+                        width: '72px', height: '72px', borderRadius: '22px',
+                        border: '2px solid var(--accent-neon)', padding: '2px',
+                        background: '#000', flexShrink: 0,
+                        boxShadow: '0 0 20px rgba(0, 242, 255, 0.2)'
+                    }}>
+                        <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px' }} />
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{user.silk}</div>
-                        <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Silk</div>
+                    <div style={{ flex: 1, minWidth: 0, position: 'relative', zIndex: 2 }}>
+                        <div style={{ fontWeight: '900', fontSize: '1.4rem', letterSpacing: '-0.03em', color: 'white' }}>@{user.handle}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
+                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{user.status || 'Свободен'}</span>
+                        </div>
                     </div>
-                </div>
+                    <div style={{ textAlign: 'right', position: 'relative', zIndex: 2 }}>
+                        <div className="text-gradient" style={{ fontSize: '1.5rem', fontWeight: '900' }}>{user.silk}</div>
+                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>Silk Crystal</div>
+                    </div>
+                </motion.div>
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
