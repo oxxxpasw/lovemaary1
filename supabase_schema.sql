@@ -15,6 +15,9 @@ CREATE TABLE profiles (
   silk INTEGER DEFAULT 100,
   role TEXT DEFAULT 'Моногам',
   status TEXT DEFAULT 'Свободен',
+  telegram_id BIGINT,
+  notify_proposals BOOLEAN DEFAULT true,
+  notify_marriages BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

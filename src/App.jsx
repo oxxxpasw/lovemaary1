@@ -9,9 +9,13 @@ import ChapelScreen from './screens/ChapelScreen';
 import CertificateScreen from './screens/CertificateScreen';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { Heart, User, BarChart3, Settings, Globe } from 'lucide-react';
+import SettingsScreen from './screens/SettingsScreen';
+import FeedScreen from './screens/FeedScreen'; // New
+import { motion } from 'framer-motion';
 
 function AppContent() {
-  const { currentScreen } = useApp();
+  const { currentScreen, user, setCurrentScreen, logout } = useApp();
   const [viewportHeight, setViewportHeight] = useState('100vh');
 
   useEffect(() => {
@@ -37,6 +41,41 @@ function AppContent() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Keyboard Detection — только для текстовых полей, не для кнопок!
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    const handleFocus = (e) => {
+      const tag = e.target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') {
+        setKeyboardVisible(true);
+      }
+    };
+    const handleBlur = () => setKeyboardVisible(false);
+    window.addEventListener('focusin', handleFocus);
+    window.addEventListener('focusout', handleBlur);
+    return () => {
+      window.removeEventListener('focusin', handleFocus);
+      window.removeEventListener('focusout', handleBlur);
+    };
+  }, []);
+
+  const showNavbar = user && !['splash', 'auth'].includes(currentScreen) && !isKeyboardVisible;
+
+  const NavIcon = ({ screen, Icon, activeColor = 'var(--accent-neon)' }) => (
+    <motion.div
+      whileTap={{ scale: 0.8 }}
+      onClick={() => setCurrentScreen(screen)}
+      style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+    >
+      <Icon size={22} color={currentScreen === screen ? activeColor : 'var(--text-muted)'} />
+      <div style={{
+        width: '4px', height: '4px', borderRadius: '50%',
+        background: currentScreen === screen ? activeColor : 'transparent',
+        marginTop: '2px'
+      }} />
+    </motion.div>
+  );
+
   return (
     <div className="app" style={{ height: viewportHeight }}>
       <AnimatePresence mode="wait">
@@ -46,8 +85,24 @@ function AppContent() {
         {currentScreen === 'chapel' && <ChapelScreen key="chapel" />}
         {currentScreen === 'passport' && <PassportScreen key="passport" />}
         {currentScreen === 'ships' && <ShipScreen key="ships" />}
+        {currentScreen === 'feed' && <FeedScreen key="feed" />}
+        {currentScreen === 'settings' && <SettingsScreen key="settings" />}
         {currentScreen === 'certificate' && <CertificateScreen key="certificate" />}
       </AnimatePresence>
+
+      {showNavbar && (
+        <motion.div
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="nav-island"
+        >
+          <NavIcon screen="feed" Icon={Globe} />
+          <NavIcon screen="dashboard" Icon={Heart} />
+          <NavIcon screen="ships" Icon={BarChart3} />
+          <NavIcon screen="passport" Icon={User} />
+          <NavIcon screen="settings" Icon={Settings} />
+        </motion.div>
+      )}
     </div>
   );
 }

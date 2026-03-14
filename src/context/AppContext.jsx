@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
+import { notifyProposal, notifyMarriage } from '../utils/notifications';
 
 const AppContext = createContext();
 
@@ -248,6 +249,8 @@ export const AppProvider = ({ children }) => {
             console.error('[Supabase] Send proposal error:', error);
         } else {
             setSentProposals([{ ...partnerData, id: Date.now() }, ...sentProposals]);
+            // Отправляем TG-уведомление партнёру
+            notifyProposal(partnerData.handle, user.handle);
         }
     };
 
@@ -298,7 +301,7 @@ export const AppProvider = ({ children }) => {
                 .select()
                 .single();
 
-            // Обновляем статус пользователя
+            // Обновляем статус текущего пользователя
             const newStatus = `В союзе с @${activeWedding.partner}`;
             await supabase
                 .from('profiles')
@@ -308,9 +311,31 @@ export const AppProvider = ({ children }) => {
                 })
                 .eq('handle', user.handle);
 
+            // Обновляем статус ПАРТНЁРА тоже!
+            const partnerStatus = `В союзе с @${user.handle}`;
+            await supabase
+                .from('profiles')
+                .update({ status: partnerStatus })
+                .eq('handle', activeWedding.partner);
+
+            // Начисляем партнёру Silk
+            const { data: partnerProfile } = await supabase
+                .from('profiles')
+                .select('silk')
+                .eq('handle', activeWedding.partner)
+                .maybeSingle();
+
+            if (partnerProfile) {
+                await supabase
+                    .from('profiles')
+                    .update({ silk: (partnerProfile.silk || 0) + 50 })
+                    .eq('handle', activeWedding.partner);
+            }
+
             setMarriages([{
                 id: newMarriage?.id || Date.now(),
                 partner: activeWedding.partner,
+                partnerAvatar: activeWedding.partnerAvatar,
                 date: activeWedding.date,
                 style: activeWedding.style
             }, ...marriages]);
@@ -321,7 +346,9 @@ export const AppProvider = ({ children }) => {
                 silk: prev.silk + 50
             }));
 
-            setActiveWedding(null);
+            // Отправляем TG-уведомление партнёру о свадьбе
+            notifyMarriage(activeWedding.partner, user.handle);
+
             setCurrentScreen('certificate');
         }
     };

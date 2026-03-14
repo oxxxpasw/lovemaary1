@@ -206,22 +206,6 @@ const Dashboard = () => {
                 </div>
             )}
 
-            {/* Navigation Bar */}
-            <div className="nav-island">
-                <motion.div whileTap={{ scale: 0.8 }} onClick={() => setCurrentScreen('dashboard')}>
-                    <Heart size={24} className="text-gradient" />
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.8 }} onClick={() => setCurrentScreen('ships')}>
-                    <BarChart3 size={24} color="var(--text-muted)" />
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.8 }} onClick={() => setCurrentScreen('passport')}>
-                    <User size={24} color="var(--text-muted)" />
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.8 }} onClick={() => logout()}>
-                    <Settings size={24} color="var(--text-muted)" />
-                </motion.div>
-            </div>
-
             {/* Proposal Modal - Ultra Premium */}
             {showProposalModal && (
                 <div style={{

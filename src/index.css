@@ -45,23 +45,32 @@ body {
   height: 100%;
   width: 100%;
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  flex: 1;
+  min-height: 0;
   padding-top: calc(var(--safe-top) + 1.2rem);
-  padding-bottom: calc(var(--safe-bottom) + 6rem);
+  padding-bottom: calc(var(--safe-bottom) + 7rem);
   padding-left: calc(var(--safe-left) + 1.5rem);
   padding-right: calc(var(--safe-right) + 1.5rem);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   background: var(--grad-main);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 /* Base Components */
@@ -221,21 +230,20 @@ h1 {
 .nav-island {
   position: fixed;
   bottom: calc(var(--safe-bottom) + 1.2rem);
-  left: 1.2rem;
-  right: 1.2rem;
-  height: 68px;
-  background: rgba(15, 15, 20, 0.85);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 34px;
+  left: 1rem;
+  right: 1rem;
+  height: 72px;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
   display: flex !important;
   justify-content: space-around !important;
   align-items: center !important;
-  padding: 0 1.2rem;
-  z-index: 10000 !important;
-  /* Extremely high to stay above everything */
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8);
+  padding: 0 0.8rem;
+  z-index: 9999 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .role-chip {
