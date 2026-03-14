@@ -45,14 +45,16 @@ body {
   height: 100%;
   width: 100%;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
 }
 
 .screen {
-  flex: 1;
-  min-height: 0;
-  padding-top: calc(var(--safe-top) + 1.2rem);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: calc(env(safe-area-inset-top, 50px) + 1.2rem);
   padding-bottom: calc(var(--safe-bottom) + 7rem);
   padding-left: calc(var(--safe-left) + 1.5rem);
   padding-right: calc(var(--safe-right) + 1.5rem);

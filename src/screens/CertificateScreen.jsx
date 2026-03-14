@@ -55,6 +55,7 @@ const CertificateScreen = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="screen"
             style={{
                 background: 'var(--grad-main)',
@@ -194,7 +195,7 @@ const CertificateScreen = () => {
             </div>
 
             <p style={{ marginTop: '1.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', opacity: 0.6 }}>Сохраните сертификат, чтобы поделиться им с миром</p>
-        </motion.div>
+        </motion.div >
     );
 };
 

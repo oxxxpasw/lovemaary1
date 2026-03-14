@@ -72,8 +72,7 @@ const SettingsScreen = () => {
     };
 
     const Toggle = ({ value, onToggle }) => (
-        <motion.div
-            whileTap={{ scale: 0.9 }}
+        <div
             onClick={onToggle}
             style={{
                 width: '48px', height: '28px',
@@ -81,22 +80,23 @@ const SettingsScreen = () => {
                 background: value ? 'var(--accent-neon)' : 'rgba(255,255,255,0.1)',
                 padding: '3px',
                 cursor: 'pointer',
-                transition: 'background 0.2s ease',
+                transition: 'background 0.2s ease, justify-content 0.2s ease',
                 display: 'flex',
-                alignItems: value ? 'center' : 'center',
+                alignItems: 'center',
                 justifyContent: value ? 'flex-end' : 'flex-start'
             }}
         >
-            <motion.div
-                layout
+            <div
                 style={{
                     width: '22px', height: '22px',
                     borderRadius: '11px',
                     background: 'white',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                    transition: 'transform 0.2s ease',
+                    transform: value ? 'translateX(0)' : 'translateX(0)'
                 }}
             />
-        </motion.div>
+        </div>
     );
 
     return (

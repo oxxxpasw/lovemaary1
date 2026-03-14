@@ -9,13 +9,18 @@ const AuthScreen = () => {
     const [handle, setHandle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const [error, setError] = useState('');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (handle.trim()) {
             setIsLoading(true);
+            setError('');
             const result = await performFileAuth(handle);
             if (result.success) {
                 await login(result.data);
+            } else {
+                setError(result.error || 'Не удалось найти профиль Threads');
             }
             setIsLoading(false);
         }
@@ -34,6 +39,16 @@ const AuthScreen = () => {
                 <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>
                     Свяжите свою цифровую личность, чтобы начать путь виртуального союза.
                 </p>
+
+                {error && (
+                    <motion.div
+                        initial={{ x: 0 }}
+                        animate={{ x: [-5, 5, -5, 5, 0] }}
+                        style={{ color: '#ff4466', fontSize: '0.8rem', background: 'rgba(255, 68, 102, 0.1)', padding: '10px', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center', border: '1px solid rgba(255, 68, 102, 0.2)' }}
+                    >
+                        {error}
+                    </motion.div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ position: 'relative', marginBottom: '1.5rem' }}>

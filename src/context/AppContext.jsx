@@ -16,11 +16,14 @@ export const AppProvider = ({ children }) => {
 
     // Утилита для гарантированного отображения аватарок через прокси
     const ensureSafeAvatar = (url) => {
-        if (!url) return `https://api.dicebear.com/7.x/avataaars/svg?seed=guest`;
-        if (url.includes('cdninstagram.com') && !url.includes('weserv.nl')) {
-            return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&default=identicon`;
-        }
-        return url;
+        if (!url) return null;
+
+        // Если это уже прокси-URL или не инстаграм - не трогаем
+        const isStatic = (url || '').includes('rsrc.php') || (url || '').includes('.css') || (url || '').includes('.js');
+        if (url.includes('/api/get-avatar') || !url.includes('cdninstagram.com') || isStatic) return url;
+
+        // Проксируем через наш API
+        return `/api/get-avatar?proxy=1&url=${encodeURIComponent(url)}`;
     };
 
     // 1. Начальная загрузка и восстановление сессии
@@ -198,10 +201,9 @@ export const AppProvider = ({ children }) => {
 
         if (error) {
             console.error('[Supabase] Ошибка входа (UPSERT):', error);
-            // Fallback: заходим как "гость" если БД лежит, но даем пользователю поиграть
             setUser({
                 handle: userData.handle,
-                avatar: finalAvatar,
+                avatar: ensureSafeAvatar(finalAvatar),
                 silk: 100,
                 role: 'Моногам',
                 status: 'Свободен'
@@ -228,6 +230,32 @@ export const AppProvider = ({ children }) => {
     const sendProposal = async (partnerData) => {
         // partnerData = { handle, avatar }
 
+        // Проверка 1: Уже в браке с этим пользователем?
+        const { data: existingMarriage } = await supabase
+            .from('marriages')
+            .select('id')
+            .or(`and(partner_a.eq.${user.handle},partner_b.eq.${partnerData.handle}),and(partner_a.eq.${partnerData.handle},partner_b.eq.${user.handle})`)
+            .maybeSingle();
+
+        if (existingMarriage) {
+            console.error('[Supabase] Вы уже состоите в браке с этим пользователем.');
+            // В идеале здесь нужен toast, но пока прерываем логику
+            return { success: false, error: 'Вы уже состоите в браке с этим пользователем.' };
+        }
+
+        // Проверка 2: Уже есть активное предложение? (в любую сторону)
+        const { data: existingProposal } = await supabase
+            .from('proposals')
+            .select('id')
+            .eq('status', 'pending')
+            .or(`and(from_handle.eq.${user.handle},to_handle.eq.${partnerData.handle}),and(from_handle.eq.${partnerData.handle},to_handle.eq.${user.handle})`)
+            .maybeSingle();
+
+        if (existingProposal) {
+            console.error('[Supabase] У вас уже есть активное ожидающее предложение с этим пользователем.');
+            return { success: false, error: 'У вас уже есть активное предложение с этим пользователем.' };
+        }
+
         // Сначала регистрируем партнера в базе, если его там нет (чтобы сработал Foreign Key)
         await supabase
             .from('profiles')
@@ -247,10 +275,12 @@ export const AppProvider = ({ children }) => {
 
         if (error) {
             console.error('[Supabase] Send proposal error:', error);
+            return { success: false, error: 'Ошибка при отправке предложения.' };
         } else {
             setSentProposals([{ ...partnerData, id: Date.now() }, ...sentProposals]);
             // Отправляем TG-уведомление партнёру
             notifyProposal(partnerData.handle, user.handle);
+            return { success: true };
         }
     };
 

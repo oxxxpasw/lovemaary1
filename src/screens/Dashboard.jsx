@@ -22,14 +22,14 @@ const Dashboard = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="screen dashboard"
-            style={{ padding: '1.5rem', paddingBottom: '7rem', position: 'relative', overflowX: 'hidden' }}
         >
             <div className="hero-glow" />
             <div className="hero-glow-secondary" />
 
-            {/* Elegant Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative', zIndex: 1 }}>
+            {/* Elegant Header - Padding added for TG Safe Zone */}
+            <div style={{ paddingTop: 'env(safe-area-inset-top, 60px)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative', zIndex: 1 }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '500', marginBottom: '-5px' }}>Приветствую,</span>
                     <h1 className="text-gradient glow-text" style={{ fontSize: '2.4rem', fontWeight: '900', letterSpacing: '-0.03em' }}>

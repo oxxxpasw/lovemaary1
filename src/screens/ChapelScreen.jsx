@@ -25,7 +25,7 @@ const ChapelScreen = () => {
                 alignItems: 'center'
             }}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {stage === 'intro' && (
                     <motion.div
                         key="intro"

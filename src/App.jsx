@@ -14,6 +14,21 @@ import SettingsScreen from './screens/SettingsScreen';
 import FeedScreen from './screens/FeedScreen'; // New
 import { motion } from 'framer-motion';
 
+const NavIcon = ({ currentScreen, screen, Icon, setCurrentScreen, activeColor = 'var(--accent-neon)' }) => (
+  <motion.div
+    whileTap={{ scale: 0.8 }}
+    onClick={() => setCurrentScreen(screen)}
+    style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+  >
+    <Icon size={22} color={currentScreen === screen ? activeColor : 'var(--text-muted)'} />
+    <div style={{
+      width: '4px', height: '4px', borderRadius: '50%',
+      background: currentScreen === screen ? activeColor : 'transparent',
+      marginTop: '2px'
+    }} />
+  </motion.div>
+);
+
 function AppContent() {
   const { currentScreen, user, setCurrentScreen, logout } = useApp();
   const [viewportHeight, setViewportHeight] = useState('100vh');
@@ -61,24 +76,9 @@ function AppContent() {
 
   const showNavbar = user && !['splash', 'auth'].includes(currentScreen) && !isKeyboardVisible;
 
-  const NavIcon = ({ screen, Icon, activeColor = 'var(--accent-neon)' }) => (
-    <motion.div
-      whileTap={{ scale: 0.8 }}
-      onClick={() => setCurrentScreen(screen)}
-      style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
-    >
-      <Icon size={22} color={currentScreen === screen ? activeColor : 'var(--text-muted)'} />
-      <div style={{
-        width: '4px', height: '4px', borderRadius: '50%',
-        background: currentScreen === screen ? activeColor : 'transparent',
-        marginTop: '2px'
-      }} />
-    </motion.div>
-  );
-
   return (
     <div className="app" style={{ height: viewportHeight }}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {currentScreen === 'splash' && <SplashScreen key="splash" />}
         {currentScreen === 'auth' && <AuthScreen key="auth" />}
         {currentScreen === 'dashboard' && <Dashboard key="dashboard" />}
@@ -96,11 +96,11 @@ function AppContent() {
           animate={{ y: 0 }}
           className="nav-island"
         >
-          <NavIcon screen="feed" Icon={Globe} />
-          <NavIcon screen="dashboard" Icon={Heart} />
-          <NavIcon screen="ships" Icon={BarChart3} />
-          <NavIcon screen="passport" Icon={User} />
-          <NavIcon screen="settings" Icon={Settings} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="feed" Icon={Globe} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="dashboard" Icon={Heart} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="ships" Icon={BarChart3} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="passport" Icon={User} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="settings" Icon={Settings} />
         </motion.div>
       )}
     </div>

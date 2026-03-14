@@ -39,9 +39,23 @@ CREATE TABLE marriages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 4. Таблица кэша аватарок (для get-avatar.js)
+CREATE TABLE threads_avatars_cache (
+  username TEXT PRIMARY KEY,
+  avatar_url TEXT NOT NULL,
+  cached_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 5. Таблица ручных правок (для get-avatar.js)
+CREATE TABLE users_errors (
+  username TEXT PRIMARY KEY,
+  avatar_url TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ГАРАНТИРОВАННОЕ ВКЛЮЧЕНИЕ REALTIME
 DROP PUBLICATION IF EXISTS supabase_realtime;
-CREATE PUBLICATION supabase_realtime FOR TABLE profiles, proposals, marriages;
+CREATE PUBLICATION supabase_realtime FOR TABLE profiles, proposals, marriages, threads_avatars_cache;
 
 -- ВКЛЮЧАЕМ REPLICA IDENTITY FULL
 ALTER TABLE profiles REPLICA IDENTITY FULL;
