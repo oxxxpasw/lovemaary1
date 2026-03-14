@@ -176,78 +176,76 @@ const PassportScreen = () => {
                         animate={{ y: 0, opacity: 1 }}
                         className="glass-panel"
                         style={{
-                            padding: '2.5rem 2rem',
-                            marginBottom: '3rem',
-                            borderRadius: '40px',
+                            padding: '1.5rem',
+                            marginBottom: '2.5rem',
+                            borderRadius: '32px',
                             background: 'linear-gradient(145deg, rgba(5, 10, 15, 0.98) 0%, rgba(10, 20, 30, 0.95) 100%)',
-                            border: '1.5px solid rgba(0, 242, 255, 0.3)',
-                            boxShadow: '0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.1)',
+                            border: '1.5px solid rgba(0, 242, 255, 0.25)',
+                            boxShadow: '0 25px 50px rgba(0,0,0,0.8), 0 0 20px rgba(0, 242, 255, 0.05)',
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            minHeight: '260px'
                         }}
                     >
                         {/* Background Decoration */}
-                        <div style={{ position: 'absolute', right: '-30px', bottom: '-20px', opacity: 0.05, pointerEvents: 'none', color: 'var(--accent-neon)' }}>
-                            <ShieldAlert size={220} />
+                        <div style={{ position: 'absolute', right: '-40px', bottom: '-40px', opacity: 0.03, pointerEvents: 'none', color: 'var(--accent-neon)' }}>
+                            <ShieldAlert size={280} />
                         </div>
 
-                        {/* Card Header */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <div className="animate-pulse" style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 15px var(--accent-neon)' }} />
-                                <span style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>Threads ID System</span>
+                        {/* Card Header Area */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', position: 'relative', zIndex: 2 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div className="glow-active" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
+                                <span style={{ fontSize: '0.6rem', fontWeight: '900', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>ID SYSTEM</span>
                             </div>
-                            <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.1em' }}>{passportId}</div>
+                            <div style={{ fontSize: '0.75rem', fontWeight: '900', color: 'var(--accent-neon)', letterSpacing: '0.1em', opacity: 0.8 }}>{passportId}</div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '30px', position: 'relative', zIndex: 2, alignItems: 'flex-start' }}>
-                            {/* Avatar Section */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: '20px', position: 'relative', zIndex: 2 }}>
+                            {/* Avatar Column */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
                                 <motion.div
-                                    whileHover={{ scale: 1.05, rotate: 5 }}
+                                    whileHover={{ scale: 1.05 }}
                                     style={{
-                                        width: '120px', height: '120px', borderRadius: '35px', overflow: 'hidden',
-                                        border: '2.5px solid var(--accent-neon)', padding: '2px', background: '#000',
-                                        boxShadow: '0 0 30px rgba(0, 242, 255, 0.3)'
+                                        width: '100px', height: '100px', borderRadius: '28px', overflow: 'hidden',
+                                        border: '2px solid rgba(0, 242, 255, 0.4)', padding: '2px', background: '#000'
                                     }}
                                 >
-                                    <img src={viewedUser?.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '31px' }} />
+                                    <img src={viewedUser?.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '24px' }} />
                                 </motion.div>
                                 <div style={{
-                                    background: 'rgba(0, 242, 255, 0.15)', color: 'var(--accent-neon)',
-                                    fontSize: '0.65rem', fontWeight: '900', padding: '6px 18px',
-                                    borderRadius: '12px', border: '1px solid rgba(0, 242, 255, 0.3)',
-                                    textTransform: 'uppercase', letterSpacing: '0.15em'
+                                    background: 'rgba(0, 242, 255, 0.08)', color: 'var(--accent-neon)',
+                                    fontSize: '0.55rem', fontWeight: '900', padding: '5px 0', width: '100%',
+                                    textAlign: 'center', borderRadius: '10px', border: '1px solid rgba(0, 242, 255, 0.2)',
+                                    textTransform: 'uppercase', letterSpacing: '0.1em'
                                 }}>
-                                    Verified Union
+                                    VERIFIED
                                 </div>
                             </div>
 
-                            {/* Info Section */}
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <div>
-                                    <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Registry Handle</p>
-                                    <h3 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.04em', color: 'white', lineHeight: 1 }}>
+                            {/* Data Column */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', justifyContent: 'center', overflow: 'hidden' }}>
+                                <div style={{ overflow: 'hidden' }}>
+                                    <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '4px', fontWeight: '800' }}>Registry Handle</p>
+                                    <h3 className="truncate-text" style={{ fontSize: '1.5rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white' }}>
                                         @{viewedUser?.handle}
                                     </h3>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                                    <div>
-                                        <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Status</p>
-                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser?.status || 'Active'}</p>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div style={{ overflow: 'hidden' }}>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Status</p>
+                                        <p className="truncate-text" style={{ fontSize: '0.85rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{viewedUser?.status || 'Active'}</p>
                                     </div>
-                                    <div>
-                                        <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '6px', fontWeight: '800' }}>Role</p>
-                                        <p style={{ fontSize: '1rem', fontWeight: '900', color: 'white' }}>{viewedUser?.role}</p>
+                                    <div style={{ overflow: 'hidden' }}>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px', fontWeight: '800' }}>Role</p>
+                                        <p className="truncate-text" style={{ fontSize: '0.85rem', fontWeight: '900', color: 'white' }}>{viewedUser?.role}</p>
                                     </div>
                                 </div>
 
-                                <div style={{ marginTop: '10px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: 0.6 }}>
-                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                                        <span style={{ fontSize: '0.65rem', color: 'white', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Security Level: Platinum</span>
-                                    </div>
+                                <div style={{ marginTop: '5px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <ShieldCheck size={12} color="var(--accent-neon)" opacity={0.6} />
+                                    <span style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Security: Platinum Level</span>
                                 </div>
                             </div>
                         </div>

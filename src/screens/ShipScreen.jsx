@@ -136,55 +136,34 @@ const ShipScreen = () => {
                                 #{index + 1}
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 2 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                    {/* Rank Badge */}
-                                    <div style={{
-                                        fontSize: '1.2rem', fontWeight: '900',
-                                        color: index < 3 ? 'var(--accent-neon)' : 'rgba(255,255,255,0.3)',
-                                        width: '45px', height: '45px', borderRadius: '50%',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        background: index < 3 ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255,255,255,0.03)',
-                                        border: `1px solid ${index < 3 ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255,255,255,0.05)'}`
-                                    }}>
-                                        #{index + 1}
-                                    </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr auto', alignItems: 'center', gap: '15px', position: 'relative', zIndex: 2 }}>
+                                {/* Rank */}
+                                <div style={{
+                                    fontSize: '1.2rem', fontWeight: '900',
+                                    color: index < 3 ? 'var(--accent-neon)' : 'rgba(255,255,255,0.3)',
+                                    width: '45px', height: '45px', borderRadius: '50%',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    background: index < 3 ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255,255,255,0.03)',
+                                    border: `1px solid ${index < 3 ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255,255,255,0.05)'}`,
+                                    flexShrink: 0
+                                }}>
+                                    #{index + 1}
+                                </div>
 
-                                    {/* Avatars Overlap */}
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <div style={{
-                                            width: '64px', height: '64px', borderRadius: '22px',
-                                            border: '2px solid var(--accent-neon)', overflow: 'hidden',
-                                            zIndex: 5, background: '#000', padding: '1.5px',
-                                            boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
-                                        }}>
-                                            <img src={ship.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '19px' }} />
-                                        </div>
-                                        <div style={{
-                                            width: '64px', height: '64px', borderRadius: '22px',
-                                            border: '2px solid var(--accent-hot)', overflow: 'hidden',
-                                            marginLeft: '-20px', zIndex: 4, background: '#000', padding: '1.5px',
-                                            boxShadow: '0 0 15px rgba(255, 45, 85, 0.2)'
-                                        }}>
-                                            <img src={ship.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '19px' }} />
-                                        </div>
+                                {/* Content */}
+                                <div style={{ minWidth: 0 }}>
+                                    <div className="truncate-text" style={{ fontWeight: '900', fontSize: '1.2rem', color: 'white', letterSpacing: '-0.02em' }}>
+                                        @{ship.partner_a} <span style={{ opacity: 0.3, fontWeight: '400' }}>&</span> @{ship.partner_b}
                                     </div>
-
-                                    {/* Text Info */}
-                                    <div>
-                                        <div style={{ fontWeight: '900', fontSize: '1.2rem', letterSpacing: '-0.02em', color: 'white' }}>
-                                            @{ship.partner_a} <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1rem' }}>&</span> @{ship.partner_b}
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                                            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                                {ship.wedding_style || 'Cyber Union'}
-                                            </div>
-                                        </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-neon)', flexShrink: 0 }} />
+                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                            {ship.wedding_style || 'Cyber Union'}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* Hot Button */}
+                                {/* Vote Action */}
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => handleBoost(ship.id)}
@@ -192,24 +171,25 @@ const ShipScreen = () => {
                                     style={{
                                         background: 'linear-gradient(to bottom, rgba(255, 45, 85, 0.15), rgba(255, 45, 85, 0.05))',
                                         border: '1px solid rgba(255, 45, 85, 0.4)',
-                                        padding: '12px 20px',
-                                        borderRadius: '20px',
+                                        padding: '10px 15px',
+                                        borderRadius: '18px',
                                         color: 'var(--accent-hot)',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
-                                        gap: '4px',
+                                        gap: '2px',
                                         cursor: 'pointer',
-                                        minWidth: '70px',
-                                        backdropFilter: 'blur(5px)'
+                                        minWidth: '65px',
+                                        backdropFilter: 'blur(5px)',
+                                        flexShrink: 0
                                     }}
                                 >
                                     {votingId === ship.id ? (
-                                        <Loader2 className="animate-spin" size={18} />
+                                        <Loader2 className="animate-spin" size={16} />
                                     ) : (
-                                        <Flame size={20} fill="currentColor" />
+                                        <Flame size={18} fill="currentColor" />
                                     )}
-                                    <span style={{ fontWeight: '900', fontSize: '1.1rem' }}>{ship.hype_score || 0}</span>
+                                    <span style={{ fontWeight: '900', fontSize: '1rem' }}>{ship.hype_score || 0}</span>
                                 </motion.button>
                             </div>
                         </motion.div>

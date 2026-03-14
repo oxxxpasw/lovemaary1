@@ -132,16 +132,16 @@ const FeedScreen = () => {
                                 }}>
                                     <Heart size={26} fill="currentColor" />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <h3 style={{ fontSize: '1.4rem', fontWeight: '900', letterSpacing: '-0.03em', color: 'white', marginBottom: '4px' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h3 className="truncate-text" style={{ fontSize: '1.2rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white', marginBottom: '4px' }}>
                                         @{item.partners[0]} <span style={{ color: 'rgba(255,255,255,0.2)', fontWeight: '400' }}>&</span> @{item.partners[1]}
                                     </h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'var(--accent-neon)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                             {item.style} Edition
                                         </span>
-                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
-                                        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Verified Union</span>
+                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                                        <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Verified Union</span>
                                     </div>
                                 </div>
                             </div>

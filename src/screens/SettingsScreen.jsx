@@ -124,44 +124,50 @@ const SettingsScreen = () => {
             {/* User Profile Summary Card */}
             {user && (
                 <motion.div
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.01 }}
                     className="glass-panel"
                     style={{
-                        padding: '1.8rem',
-                        marginBottom: '3rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '20px',
-                        borderRadius: '32px',
+                        padding: '1.2rem',
+                        marginBottom: '2.5rem',
+                        borderRadius: '28px',
                         border: '1.5px solid rgba(255, 255, 255, 0.1)',
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(5, 10, 15, 0.95) 100%)',
                         boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        display: 'grid',
+                        gridTemplateColumns: '70px 1fr auto',
+                        alignItems: 'center',
+                        gap: '15px'
                     }}
                 >
                     <div style={{ position: 'absolute', right: '-10px', top: '-10px', opacity: 0.03, color: 'var(--accent-neon)', pointerEvents: 'none' }}>
-                        <User size={120} />
+                        <User size={100} />
                     </div>
 
                     <div style={{
-                        width: '72px', height: '72px', borderRadius: '22px',
-                        border: '2px solid var(--accent-neon)', padding: '2px',
-                        background: '#000', flexShrink: 0,
-                        boxShadow: '0 0 20px rgba(0, 242, 255, 0.2)'
+                        width: '70px', height: '70px', borderRadius: '20px',
+                        border: '2px solid rgba(0, 242, 255, 0.3)', padding: '2px',
+                        background: '#000', position: 'relative', zIndex: 2
                     }}>
-                        <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px' }} />
+                        <img src={user.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
                     </div>
-                    <div style={{ flex: 1, minWidth: 0, position: 'relative', zIndex: 2 }}>
-                        <div style={{ fontWeight: '900', fontSize: '1.4rem', letterSpacing: '-0.03em', color: 'white' }}>@{user.handle}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{user.status || 'Свободен'}</span>
+
+                    <div style={{ minWidth: 0, position: 'relative', zIndex: 2 }}>
+                        <div className="truncate-text" style={{ fontWeight: '900', fontSize: '1.2rem', color: 'white' }}>
+                            @{user.handle}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', overflow: 'hidden' }}>
+                            <div className="glow-active" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-neon)', flexShrink: 0 }} />
+                            <span className="truncate-text" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                {user.status || 'Свободен'}
+                            </span>
                         </div>
                     </div>
-                    <div style={{ textAlign: 'right', position: 'relative', zIndex: 2 }}>
-                        <div className="text-gradient" style={{ fontSize: '1.5rem', fontWeight: '900' }}>{user.silk}</div>
-                        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>Silk Crystal</div>
+
+                    <div style={{ textAlign: 'right', position: 'relative', zIndex: 2, paddingLeft: '10px' }}>
+                        <div className="text-gradient" style={{ fontSize: '1.3rem', fontWeight: '900' }}>{user.silk}</div>
+                        <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em' }}>SILK</div>
                     </div>
                 </motion.div>
             )}
