@@ -57,7 +57,7 @@ const FeedScreen = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="screen"
-            style={{ paddingTop: '85px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
+            style={{ paddingTop: '110px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
             <div style={{ marginBottom: '2.5rem' }}>
                 <h1 style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.04em' }}>Мировая <span className="text-gradient">Лента</span></h1>
