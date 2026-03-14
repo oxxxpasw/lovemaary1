@@ -83,6 +83,16 @@ export default async function handler(req, res) {
 
         // Обработка /start <handle>
         if (text.startsWith('/start')) {
+            const protocol = req.headers['x-forwarded-proto'] || 'https';
+            const host = req.headers.host;
+            const miniAppUrl = `${protocol}://${host}`;
+
+            const keyboard = {
+                inline_keyboard: [[
+                    { text: '💍 Открыть MarryThreads', web_app: { url: miniAppUrl } }
+                ]]
+            };
+
             const parts = text.split(' ');
             if (parts.length > 1) {
                 const handle = parts[1].replace('@', '').trim().toLowerCase();
@@ -94,15 +104,15 @@ export default async function handler(req, res) {
                         .ilike('handle', handle);
 
                     if (error) {
-                        await sendMsg(chatId, `❌ <b>Ошибка привязки:</b> @${handle}\n\nПожалуйста, убедитесь, что вы уже зашли в приложение MarryThreads хотя бы один раз.`);
+                        await sendMsg(chatId, `❌ <b>Ошибка привязки:</b> @${handle}\n\nПожалуйста, убедитесь, что вы уже зашли в приложение MarryThreads хотя бы один раз.`, keyboard);
                     } else {
-                        await sendMsg(chatId, `🤝 <b>Профиль @${handle} успешно привязан!</b>\n\nТеперь я буду присылать вам мгновенные уведомления о:\n💍 Новых предложениях\n🎉 Заключенных союзах\n💔 Разводах\n\nИспользуйте Mini App, чтобы управлять своей личной жизнью в Threads! ✨`);
+                        await sendMsg(chatId, `🤝 <b>Профиль @${handle} успешно привязан!</b>\n\nТеперь я буду присылать вам мгновенные уведомления о:\n💍 Новых предложениях\n🎉 Заключенных союзах\n💔 Разводах\n\nНажмите кнопку ниже, чтобы управлять своей личной жизнью в Threads! ✨`, keyboard);
                     }
                 } catch (err) {
-                    await sendMsg(chatId, `❌ <b>Системная ошибка:</b>\n${err.message}`);
+                    await sendMsg(chatId, `❌ <b>Системная ошибка:</b>\n${err.message}`, keyboard);
                 }
             } else {
-                await sendMsg(chatId, `✨ <b>Добро пожаловать в MarryThreads!</b> 💍\n\nЯ — официальный бот первого сервиса цифровых браков в Threads.\n\n<b>Что я умею:</b>\n— Сообщаю о новых сигналах внимания\n— Уведомляю о регистрации союзов\n— Помогаю делиться вашим цифровым паспортом\n\n🚀 <b>Запустите приложение ниже, чтобы начать!</b>\n\n<i>Если вы зашли не через Mini App, используйте команду:</i>\n<code>/start ваш_ник_threads</code>`);
+                await sendMsg(chatId, `✨ <b>Добро пожаловать в MarryThreads!</b> 💍\n\nЯ — официальный бот первого сервиса цифровых браков в Threads.\n\n<b>Что я умею:</b>\n— Сообщаю о новых сигналах внимания\n— Уведомляю о регистрации союзов\n— Помогаю делиться вашим цифровым паспортом\n\n🚀 <b>Нажмите на кнопку ниже, чтобы запустить приложение!</b>`, keyboard);
             }
         }
 
@@ -113,16 +123,22 @@ export default async function handler(req, res) {
     }
 }
 
-async function sendMsg(chatId, text) {
+async function sendMsg(chatId, text, replyMarkup = null) {
     try {
+        const body = {
+            chat_id: chatId,
+            text: text,
+            parse_mode: 'HTML'
+        };
+
+        if (replyMarkup) {
+            body.reply_markup = replyMarkup;
+        }
+
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: text,
-                parse_mode: 'HTML'
-            })
+            body: JSON.stringify(body)
         });
         const data = await res.json();
         if (!data.ok) console.error('[TG API] Error:', data);
