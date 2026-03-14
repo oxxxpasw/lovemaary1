@@ -5,7 +5,7 @@ import { AtSign, ArrowRight, Loader2 } from 'lucide-react';
 import { performFileAuth } from '../utils/AuthManager';
 
 const AuthScreen = () => {
-    const { setUser, setCurrentScreen } = useApp();
+    const { login } = useApp();
     const [handle, setHandle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -15,13 +15,7 @@ const AuthScreen = () => {
             setIsLoading(true);
             const result = await performFileAuth(handle);
             if (result.success) {
-                setUser({
-                    ...result.data,
-                    silk: 100,
-                    role: 'Моногам',
-                    status: 'Свободен'
-                });
-                setCurrentScreen('dashboard');
+                await login(result.data);
             }
             setIsLoading(false);
         }

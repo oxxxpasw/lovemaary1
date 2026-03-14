@@ -8,7 +8,7 @@ const Dashboard = () => {
     const {
         user, setUser, setCurrentScreen,
         sendProposal, receivedProposals, acceptProposal, rejectProposal,
-        sentProposals
+        sentProposals, updateUser
     } = useApp();
     const [searchQuery, setSearchQuery] = useState('');
     const [showProposalModal, setShowProposalModal] = useState(false);
@@ -84,7 +84,7 @@ const Dashboard = () => {
                     {roles.map(role => (
                         <button
                             key={role}
-                            onClick={() => setUser({ ...user, role })}
+                            onClick={() => updateUser({ role })}
                             className={`role-chip ${user.role === role ? 'active' : 'inactive'}`}
                             style={{ flexShrink: 0 }}
                         >
