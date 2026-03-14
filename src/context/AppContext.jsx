@@ -45,7 +45,7 @@ export const AppProvider = ({ children }) => {
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .eq('handle', handle)
+            .ilike('handle', handle)
             .maybeSingle();
 
         if (error) {
@@ -89,7 +89,7 @@ export const AppProvider = ({ children }) => {
                 const { data: sender } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('handle', payload.new.from_handle)
+                    .ilike('handle', payload.new.from_handle)
                     .maybeSingle();
 
                 setReceivedProposals(prev => [{
@@ -131,7 +131,7 @@ export const AppProvider = ({ children }) => {
                 const { data: sender } = await supabase
                     .from('profiles')
                     .select('avatar_url')
-                    .eq('handle', p.from_handle)
+                    .ilike('handle', p.from_handle)
                     .maybeSingle();
 
                 return {
@@ -165,7 +165,7 @@ export const AppProvider = ({ children }) => {
                 const { data: partner } = await supabase
                     .from('profiles')
                     .select('avatar_url')
-                    .eq('handle', partnerHandle)
+                    .ilike('handle', partnerHandle)
                     .maybeSingle();
 
                 return {
@@ -190,7 +190,7 @@ export const AppProvider = ({ children }) => {
         const { data: existingUser, error: checkError } = await supabase
             .from('profiles')
             .select('avatar_url, status')
-            .eq('handle', userData.handle)
+            .ilike('handle', userData.handle)
             .maybeSingle();
 
         if (checkError) {
@@ -376,20 +376,20 @@ export const AppProvider = ({ children }) => {
                         status: newStatus,
                         silk: user.silk + 50
                     })
-                    .eq('handle', user.handle);
+                    .ilike('handle', user.handle);
 
                 // Обновляем статус ПАРТНЁРА тоже!
                 const partnerStatus = `В союзе с @${user.handle}`;
                 await supabase
                     .from('profiles')
                     .update({ status: partnerStatus })
-                    .eq('handle', activeWedding.partner);
+                    .ilike('handle', activeWedding.partner);
 
                 // Начисляем партнёру Silk
                 const { data: partnerProfile } = await supabase
                     .from('profiles')
                     .select('silk')
-                    .eq('handle', activeWedding.partner)
+                    .ilike('handle', activeWedding.partner)
                     .maybeSingle();
 
                 if (partnerProfile) {
@@ -430,7 +430,7 @@ export const AppProvider = ({ children }) => {
         const { error } = await supabase
             .from('profiles')
             .update(updates)
-            .eq('handle', user.handle);
+            .ilike('handle', user.handle);
 
         if (!error) {
             setUser(prev => ({ ...prev, ...updates }));
@@ -479,7 +479,7 @@ export const AppProvider = ({ children }) => {
             .from('marriage_votes')
             .select('id')
             .eq('marriage_id', marriageId)
-            .eq('voter_handle', user.handle)
+            .ilike('voter_handle', user.handle)
             .maybeSingle();
 
         if (existingVote) {

@@ -1,18 +1,21 @@
 :root {
-  /* Color Palette - Digital Gothic Premium */
+  /* Color Palette - Premium Neon Lux */
   --bg-deep: #050508;
-  --bg-panel: rgba(15, 15, 20, 0.75);
+  --bg-panel: rgba(15, 15, 20, 0.7);
   --accent-neon: #00f2ff;
   --accent-hot: #ff2d55;
+  --accent-premium: #ffffff;
   --text-main: #ffffff;
   --text-muted: #8e8e93;
   --border-glass: rgba(255, 255, 255, 0.1);
   --glass-blur: blur(25px);
 
-  /* Gradations */
-  --grad-main: linear-gradient(135deg, #0a0a0c 0%, #050508 100%);
+  /* Gradations - High Contrast & Vibrancy */
+  --grad-main: radial-gradient(circle at top center, #0a0a12 0%, #050508 100%);
   --grad-neon: linear-gradient(135deg, #00f2ff 0%, #007aff 100%);
   --grad-hot: linear-gradient(135deg, #ff2d55 0%, #ff375f 100%);
+  --grad-silver: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+  --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 
   /* Safe Areas & Viewport */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -35,7 +38,7 @@ body {
   overflow: hidden;
   background-color: var(--bg-deep);
   color: var(--text-main);
-  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-family: 'Outfit', 'Inter', -apple-system, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   position: fixed;
 }
@@ -82,7 +85,20 @@ body {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-glass);
   border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .card {
@@ -111,23 +127,25 @@ body {
   background: var(--grad-neon);
   color: black;
   border: none;
-  padding: 14px 28px;
-  border-radius: 14px;
-  font-weight: 700;
+  padding: 16px 32px;
+  border-radius: 18px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  box-shadow: 0 10px 20px rgba(0, 242, 255, 0.3);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 0 35px rgba(0, 242, 255, 0.6);
   transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 242, 255, 0.5);
 }
 
 .btn-primary:active {
   transform: scale(0.95);
+  opacity: 0.9;
 }
 
 .btn-ghost {
@@ -148,11 +166,11 @@ h1 {
 }
 
 .passport-card {
-  background: linear-gradient(135deg, rgba(20, 20, 25, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
-  border: 1px solid rgba(0, 242, 255, 0.3);
+  background: linear-gradient(135deg, #1c1c1e 0%, #0a0a0b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
 }
 
 .passport-pattern {
@@ -259,7 +277,7 @@ h1 {
 }
 
 .text-gradient {
-  background: var(--grad-neon);
+  background: var(--grad-silver);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

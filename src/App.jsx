@@ -15,20 +15,46 @@ import FeedScreen from './screens/FeedScreen';
 import DivorceScreen from './screens/DivorceScreen';
 import { motion } from 'framer-motion';
 
-const NavIcon = ({ currentScreen, screen, Icon, setCurrentScreen, activeColor = 'var(--accent-neon)' }) => (
-  <motion.div
-    whileTap={{ scale: 0.8 }}
-    onClick={() => setCurrentScreen(screen)}
-    style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
-  >
-    <Icon size={22} color={currentScreen === screen ? activeColor : 'var(--text-muted)'} />
-    <div style={{
-      width: '4px', height: '4px', borderRadius: '50%',
-      background: currentScreen === screen ? activeColor : 'transparent',
-      marginTop: '2px'
-    }} />
-  </motion.div>
-);
+const NavIcon = ({ currentScreen, setCurrentScreen, screen, Icon }) => {
+  const isActive = currentScreen === screen;
+  return (
+    <motion.button
+      whileTap={{ scale: 0.85 }}
+      whileHover={{ y: -2 }}
+      onClick={() => setCurrentScreen(screen)}
+      style={{
+        background: 'none',
+        border: 'none',
+        color: isActive ? 'var(--accent-neon)' : 'rgba(255,255,255,0.4)',
+        cursor: 'pointer',
+        padding: '0.8rem',
+        borderRadius: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '4px',
+        transition: 'all 0.3s ease',
+        position: 'relative'
+      }}
+    >
+      <Icon size={isActive ? 28 : 24} strokeWidth={isActive ? 2.5 : 2} style={{ filter: isActive ? 'drop-shadow(0 0 10px rgba(0, 242, 255, 0.5))' : 'none' }} />
+      {isActive && (
+        <motion.div
+          layoutId="nav-active"
+          style={{
+            position: 'absolute',
+            bottom: '2px',
+            width: '4px',
+            height: '4px',
+            borderRadius: '50%',
+            background: 'var(--accent-neon)',
+            boxShadow: '0 0 10px var(--accent-neon)'
+          }}
+        />
+      )}
+    </motion.button>
+  );
+};
 
 function AppContent() {
   const { currentScreen, user, setCurrentScreen, logout } = useApp();
@@ -102,6 +128,7 @@ function AppContent() {
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="dashboard" Icon={Heart} />
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="ships" Icon={BarChart3} />
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="passport" Icon={User} />
+          <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="settings" Icon={Settings} />
         </motion.div>
       )}

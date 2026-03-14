@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, User, BarChart3, Settings, Loader2, Sparkles } from 'lucide-react';
+import { Heart, User, BarChart3, Settings, Loader2, Sparkles, X } from 'lucide-react';
 import { performFileAuth } from '../utils/AuthManager';
 
 const Dashboard = () => {
@@ -40,7 +40,7 @@ const Dashboard = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative', zIndex: 1 }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '500', marginBottom: '-5px' }}>Приветствую,</span>
-                    <h1 className="text-gradient glow-text" style={{ fontSize: '2.4rem', fontWeight: '900', letterSpacing: '-0.03em' }}>
+                    <h1 className="text-gradient glow-text" style={{ fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-0.04em' }}>
                         @{user.handle}
                     </h1>
                 </div>
@@ -51,11 +51,11 @@ const Dashboard = () => {
                         padding: '3px',
                         background: 'var(--grad-neon)',
                         borderRadius: '20px',
-                        boxShadow: '0 10px 30px rgba(0, 242, 255, 0.2)'
+                        boxShadow: '0 0 25px rgba(0, 242, 255, 0.4)'
                     }}
                 >
-                    <div style={{ width: '52px', height: '52px', borderRadius: '18px', overflow: 'hidden', background: '#000' }}>
-                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ width: '56px', height: '56px', borderRadius: '18px', overflow: 'hidden', background: '#000', padding: '1px' }}>
+                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '17px' }} />
                     </div>
                 </motion.div>
             </div>
@@ -63,25 +63,25 @@ const Dashboard = () => {
             {/* Central Control Hub */}
             <motion.div
                 whileHover={{ y: -5 }}
-                className="cyber-card"
-                style={{ padding: '2rem', marginBottom: '2.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}
+                className="glass-panel"
+                style={{ padding: '2.5rem 1.5rem', marginBottom: '2.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden', border: '1px solid rgba(0, 242, 255, 0.2)' }}
             >
-                <div style={{ position: 'absolute', top: '-15%', right: '-10%', opacity: 0.05 }}>
-                    <Heart size={180} fill="var(--accent-neon)" color="var(--accent-neon)" />
+                <div style={{ position: 'absolute', top: '-15%', right: '-10%', opacity: 0.1, color: 'var(--accent-neon)' }}>
+                    <Heart size={200} fill="currentColor" />
                 </div>
 
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 12px', borderRadius: '20px', background: 'rgba(0, 242, 255, 0.05)', border: '1px solid rgba(0, 242, 255, 0.1)', marginBottom: '1.5rem' }}>
-                        <div className="animate-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                        <span style={{ fontSize: '0.6rem', fontWeight: '800', letterSpacing: '0.15em', color: 'var(--accent-neon)', textTransform: 'uppercase' }}>System Active</span>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '25px', background: 'rgba(0, 242, 255, 0.08)', border: '1px solid rgba(0, 242, 255, 0.2)', marginBottom: '1.8rem' }}>
+                        <div className="animate-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 10px var(--accent-neon)' }} />
+                        <span style={{ fontSize: '0.7rem', fontWeight: '900', letterSpacing: '0.2em', color: 'var(--accent-neon)', textTransform: 'uppercase' }}>System Live</span>
                     </div>
 
-                    <h2 style={{ fontSize: '2.2rem', fontWeight: '900', marginBottom: '1rem', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    <h2 className="glow-text" style={{ fontSize: '3rem', fontWeight: '900', marginBottom: '0.8rem', letterSpacing: '-0.04em', lineHeight: 0.9 }}>
                         {user.status || 'Свободен'}
                     </h2>
 
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500', maxWidth: '80%', margin: '0 auto' }}>
-                        {user.role} • Готов к новым цифровым связям
+                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', fontWeight: '600', letterSpacing: '0.02em' }}>
+                        {user.role} • Digital Native
                     </p>
                 </div>
             </motion.div>
@@ -146,26 +146,52 @@ const Dashboard = () => {
                             key={proposal.id}
                             initial={{ x: -30, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            className="cyber-card"
+                            className="glass-panel"
                             style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 padding: '1.2rem', marginBottom: '1rem',
-                                border: '1px solid rgba(255, 45, 85, 0.25)'
+                                border: '1px solid rgba(0, 242, 255, 0.3)',
+                                boxShadow: '0 10px 30px rgba(0, 242, 255, 0.1)'
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                                 <div style={{ position: 'relative' }}>
-                                    <img src={proposal.avatar} style={{ width: '48px', height: '48px', borderRadius: '14px', objectFit: 'cover' }} />
-                                    <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '12px', height: '12px', borderRadius: '50%', background: '#ff2d55', border: '2px solid #000' }} />
+                                    <img src={proposal.avatar} style={{ width: '52px', height: '52px', borderRadius: '15px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
+                                    <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '12px', height: '12px', borderRadius: '50%', background: 'var(--accent-neon)', boxShadow: '0 0 10px var(--accent-neon)', border: '2px solid #000' }} />
                                 </div>
                                 <div>
-                                    <div style={{ fontWeight: '800', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>@{proposal.from}</div>
-                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Ожидает согласия</div>
+                                    <div style={{ fontWeight: '900', fontSize: '1.2rem', letterSpacing: '-0.02em', color: 'white' }}>@{proposal.from}</div>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Incoming Signal</div>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <motion.button whileTap={{ scale: 0.9 }} onClick={() => rejectProposal(proposal.id)} style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</motion.button>
-                                <motion.button whileTap={{ scale: 0.9 }} onClick={() => acceptProposal(proposal)} style={{ padding: '0 20px', height: '40px', borderRadius: '12px', background: 'var(--grad-neon)', border: 'none', color: 'black', fontWeight: '900', fontSize: '0.85rem' }}>Принять</motion.button>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={() => rejectProposal(proposal.id)}
+                                    style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                >
+                                    <X size={20} />
+                                </motion.button>
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => acceptProposal(proposal)}
+                                    style={{
+                                        padding: '0 24px',
+                                        height: '44px',
+                                        borderRadius: '14px',
+                                        background: 'var(--grad-neon)',
+                                        border: 'none',
+                                        color: 'black',
+                                        fontWeight: '900',
+                                        fontSize: '0.85rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        boxShadow: '0 5px 15px rgba(0, 242, 255, 0.4)',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Принять
+                                </motion.button>
                             </div>
                         </motion.div>
                     ))}

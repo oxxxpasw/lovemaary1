@@ -33,7 +33,7 @@ const PassportScreen = () => {
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('handle', handle)
+                .ilike('handle', handle)
                 .single();
 
             if (profileError) {
@@ -72,7 +72,7 @@ const PassportScreen = () => {
                     const { data: partner, error: partnerError } = await supabase
                         .from('profiles')
                         .select('avatar_url')
-                        .eq('handle', partnerHandle)
+                        .ilike('handle', partnerHandle)
                         .maybeSingle();
 
                     if (partnerError) console.error('Error fetching partner avatar:', partnerError);
@@ -143,11 +143,15 @@ const PassportScreen = () => {
                         <Search size={18} />
                     </button>
                 </form>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button onClick={() => { setViewingHandle(null); setCurrentScreen('dashboard'); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => { setViewingHandle(null); setCurrentScreen('dashboard'); }}
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', width: '48px', height: '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
                         <ArrowLeft size={24} />
-                    </button>
-                    <h1>{isOwnPassport ? 'Личный паспорт' : `Паспорт @${viewingHandle}`}</h1>
+                    </motion.button>
+                    <h1 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.04em' }}>{isOwnPassport ? 'Личный профиль' : `Профиль @${viewingHandle}`}</h1>
                 </div>
             </div>
 
@@ -158,130 +162,71 @@ const PassportScreen = () => {
                 </div>
             ) : (
                 <>
-                    {/* Passport ID Card */}
+                    {/* The Digital Card - Luxury Neon Edition */}
                     <motion.div
-                        whileHover={{ scale: 1.02 }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
                         className="passport-card"
                         style={{
-                            background: 'rgba(255,255,255,0.03)',
-                            borderRadius: '30px',
-                            padding: '1.5rem',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            padding: '2.5rem 1.5rem',
                             marginBottom: '2.5rem',
+                            borderRadius: '35px',
+                            border: '1px solid rgba(0, 242, 255, 0.3)',
+                            boxShadow: '0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 242, 255, 0.05)',
                             position: 'relative',
-                            overflow: 'hidden',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+                            overflow: 'hidden'
                         }}
                     >
-                        <div className="passport-pattern" />
+                        <div className="passport-pattern" style={{ opacity: 0.1, backgroundImage: 'radial-gradient(var(--accent-neon) 1px, transparent 1px)', backgroundSize: '15px 15px' }} />
+                        <div className="passport-seal" style={{ borderColor: 'var(--accent-neon)', position: 'absolute', bottom: '-20px', right: '-20px', width: '150px', height: '150px', border: '2px dashed', opacity: 0.1, borderRadius: '50%', transform: 'rotate(-15deg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: '900', color: 'var(--accent-neon)' }}>MARRYTHREADS</div>
 
-                        {/* ID Header */}
-                        <div style={{
-                            padding: '1.2rem',
-                            borderBottom: '1px solid rgba(0,242,255,0.1)',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            background: 'rgba(255,255,255,0.02)'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-neon)' }} />
-                                <span style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--text-muted)' }}>THREADS FEDERATION</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', position: 'relative', zIndex: 2 }}>
+                            <div style={{ padding: '6px 16px', borderRadius: '15px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                <span style={{ fontSize: '0.65rem', fontWeight: '800', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)' }}>DIGITAL PASSPORT</span>
                             </div>
-                            <span style={{ fontSize: '0.7rem', color: 'var(--accent-neon)', fontWeight: 'bold' }}>{passportId}</span>
+                            <span style={{ fontSize: '0.7rem', fontWeight: '700', opacity: 0.5, fontFamily: 'monospace' }}>{passportId}</span>
                         </div>
 
-                        {/* Header с кнопкой назад если это чужой паспорт */}
-                        {!isOwnPassport && (
-                            <motion.button
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                onClick={() => setViewingHandle(null)}
-                                style={{
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    padding: '8px 15px',
-                                    borderRadius: '12px',
-                                    color: 'white',
-                                    margin: '1rem 1.5rem 0',
-                                    fontSize: '0.8rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                ← Вернуться
-                            </motion.button>
-                        )}
-
-                        <div style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem' }}>
-                            {/* Photo Side */}
-                            <div style={{ position: 'relative' }}>
-                                <div className="passport-glitch" style={{
-                                    width: '100px',
-                                    height: '110px',
-                                    borderRadius: '12px',
-                                    overflow: 'hidden',
-                                    border: '1px solid var(--accent-neon)',
-                                    background: '#000'
-                                }}>
-                                    <img src={viewedUser?.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
-                                </div>
+                        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+                            <div className="passport-glitch" style={{ position: 'relative' }}>
                                 <div style={{
-                                    position: 'absolute',
-                                    bottom: '-5px',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    background: 'var(--accent-neon)',
-                                    color: 'black',
-                                    fontSize: '0.5rem',
-                                    padding: '2px 8px',
-                                    borderRadius: '4px',
-                                    fontWeight: 'bold',
-                                    whiteSpace: 'nowrap'
+                                    width: '100px', height: '100px', borderRadius: '25px', overflow: 'hidden',
+                                    border: '2px solid var(--accent-neon)', boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)'
                                 }}>
+                                    <img src={viewedUser.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                                <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', background: 'var(--accent-neon)', color: 'black', fontSize: '0.6rem', fontWeight: '900', padding: '4px 10px', borderRadius: '10px', boxShadow: '0 5px 10px rgba(0, 242, 255, 0.4)' }}>
                                     VERIFIED
                                 </div>
                             </div>
 
-                            {/* Info Side */}
                             <div style={{ flex: 1 }}>
-                                <div style={{ marginBottom: '0.8rem' }}>
-                                    <label style={{ fontSize: '0.5rem', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>NAME / НИКНЕЙМ</label>
-                                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>@{viewedUser?.handle}</span>
-                                </div>
-                                <div style={{ marginBottom: '0.8rem' }}>
-                                    <label style={{ fontSize: '0.5rem', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>STATUS / СТАТУС</label>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-neon)' }}>{viewedUser?.status}</span>
-                                </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <h3 className="glow-text" style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+                                    @{viewedUser.handle}
+                                </h3>
+                                <div style={{ display: 'flex', gap: '15px', marginTop: '12px' }}>
                                     <div>
-                                        <label style={{ fontSize: '0.5rem', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>UNIONS / СОЮЗЫ</label>
-                                        <span style={{ fontSize: '1rem', fontWeight: 'bold' }}>{viewedMarriages.length}</span>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--accent-neon)' }}>{viewedUser.status || 'Active'}</p>
                                     </div>
                                     <div>
-                                        <label style={{ fontSize: '0.5rem', color: 'var(--text-muted)', display: 'block', marginBottom: '2px' }}>EXP / СРОК</label>
-                                        <span style={{ fontSize: '0.7rem' }}>FOREVER</span>
+                                        <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Unions</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '800', color: 'white' }}>{viewedMarriages.length}</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="passport-seal">
-                            <Heart size={80} color="var(--accent-neon)" />
                         </div>
                     </motion.div>
 
                     {/* Anniversary Log */}
                     <div style={{ position: 'relative' }}>
-                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
-                            <HistoryIcon size={20} color="var(--accent-neon)" /> Журнал записей
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
+                            <HistoryIcon size={22} color="var(--accent-neon)" /> Журнал союзов
                         </h3>
 
                         {viewedMarriages.length === 0 ? (
-                            <div className="glass-panel card" style={{ textAlign: 'center', opacity: 0.3, padding: '3rem' }}>
-                                <Sparkles size={32} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                            <div className="glass-panel" style={{ textAlign: 'center', opacity: 0.3, padding: '3rem', borderRadius: '24px' }}>
+                                <Sparkles size={32} style={{ marginBottom: '1rem', opacity: 0.5, color: 'var(--accent-neon)' }} />
                                 <p style={{ fontSize: '0.9rem' }}>Ваш журнал пуст.<br />Время создать историю.</p>
                             </div>
                         ) : (
@@ -296,33 +241,34 @@ const PassportScreen = () => {
                                         className="glass-panel"
                                         style={{
                                             padding: '1.2rem',
-                                            borderRadius: '16px',
+                                            borderRadius: '20px',
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             alignItems: 'center',
-                                            cursor: !isOwnPassport ? 'pointer' : 'default'
+                                            cursor: !isOwnPassport ? 'pointer' : 'default',
+                                            border: '1px solid rgba(255, 255, 255, 0.05)'
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }}>
-                                                <img src={m.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.partner}`} style={{ width: '100%' }} />
+                                            <div style={{ width: '45px', height: '45px', borderRadius: '50%', border: '1px solid var(--accent-neon)', overflow: 'hidden', padding: '1px' }}>
+                                                <img src={m.partnerAvatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.partner}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: 'bold', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <div style={{ fontWeight: '900', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '6px', letterSpacing: '-0.02em' }}>
                                                     @{m.partner}
-                                                    {m.ring_id === 'diamond' && <span style={{ fontSize: '0.8rem' }} title="Алмазное кольцо">💎</span>}
-                                                    {m.ring_id === 'neon' && <span style={{ fontSize: '0.8rem' }} title="Неоновое кольцо">🔥</span>}
-                                                    {m.ring_id === 'basic' && <span style={{ fontSize: '0.8rem' }} title="Обычное кольцо">💍</span>}
+                                                    {m.ring_id === 'diamond' && <span style={{ fontSize: '1rem' }}>💎</span>}
+                                                    {m.ring_id === 'neon' && <span style={{ fontSize: '1rem' }}>🔥</span>}
+                                                    {m.ring_id === 'basic' && <span style={{ fontSize: '1rem' }}>💍</span>}
                                                 </div>
-                                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    {m.style} • <span style={{ color: 'var(--accent-hot)' }}>🔥 {m.hype_score}</span>
+                                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: '600' }}>
+                                                    {m.style} • <span style={{ color: 'var(--accent-hot)' }}>Hype: {m.hype_score}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                                             <div style={{ textAlign: 'right' }}>
-                                                <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--accent-neon)' }}>{m.date}</div>
-                                                <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Confirmed</div>
+                                                <div style={{ fontSize: '0.85rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{m.date}</div>
+                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: '800' }}>Confirmed</div>
                                             </div>
 
                                             {isOwnPassport && (
@@ -334,7 +280,7 @@ const PassportScreen = () => {
                                                             divorce(m.id);
                                                         }
                                                     }}
-                                                    style={{ background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.3)', padding: '8px', borderRadius: '12px', color: '#ff2d55', cursor: 'pointer' }}
+                                                    style={{ background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.3)', padding: '10px', borderRadius: '15px', color: '#ff2d55', cursor: 'pointer' }}
                                                 >
                                                     <XOctagon size={18} />
                                                 </motion.button>
@@ -353,10 +299,10 @@ const PassportScreen = () => {
                                 navigator.clipboard.writeText(`https://marrythreads.app/passport/${user.handle}`);
                                 alert('Ссылка на ваш паспорт скопирована!');
                             }}
-                            className="btn-ghost"
-                            style={{ width: '100%', height: '55px', borderRadius: '18px', marginTop: '2rem' }}
+                            className="btn-primary"
+                            style={{ width: '100%', height: '60px', borderRadius: '20px', marginTop: '2.5rem', background: 'var(--grad-neon)' }}
                         >
-                            Поделиться профилем <Share2 size={16} style={{ marginLeft: '8px' }} />
+                            Поделиться профилем <Share2 size={18} style={{ marginLeft: '10px' }} />
                         </motion.button>
                     )}
                 </>

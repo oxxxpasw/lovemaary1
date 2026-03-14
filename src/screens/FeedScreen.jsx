@@ -27,8 +27,8 @@ const FeedScreen = () => {
                 });
 
                 const items = await Promise.all(uniqueMarriages.map(async m => {
-                    const { data: pA } = await supabase.from('profiles').select('avatar_url').eq('handle', m.partner_a).maybeSingle();
-                    const { data: pB } = await supabase.from('profiles').select('avatar_url').eq('handle', m.partner_b).maybeSingle();
+                    const { data: pA } = await supabase.from('profiles').select('avatar_url').ilike('handle', m.partner_a).maybeSingle();
+                    const { data: pB } = await supabase.from('profiles').select('avatar_url').ilike('handle', m.partner_b).maybeSingle();
 
                     return {
                         id: m.id,
@@ -59,9 +59,9 @@ const FeedScreen = () => {
             className="screen"
             style={{ paddingTop: '85px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
-            <div style={{ marginBottom: '2rem', paddingTop: '1rem' }}>
-                <h1 style={{ fontSize: '2rem', fontWeight: '900' }}>Мировая <span className="text-gradient">Лента</span></h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Пульс цифрового Купидона</p>
+            <div style={{ marginBottom: '2.5rem' }}>
+                <h1 style={{ fontSize: '2.2rem', fontWeight: '900', letterSpacing: '-0.04em' }}>Мировая <span className="text-gradient">Лента</span></h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: '4px' }}>Пульс цифрового Купидона</p>
             </div>
 
             {loading ? (
@@ -75,52 +75,48 @@ const FeedScreen = () => {
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', opacity: 0.6 }}>Стань первым — отправь предложение!</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {feed.map(item => (
                         <motion.div
                             key={item.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="cyber-card"
-                            style={{ padding: '1.5rem', border: '1px solid rgba(0, 242, 255, 0.15)' }}
+                            className="glass-panel"
+                            style={{ padding: '2rem 1.5rem', border: '1px solid rgba(0, 242, 255, 0.15)', borderRadius: '25px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                <div style={{ display: 'flex', gap: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }}>
+                                <div style={{ display: 'flex', gap: '10px' }}>
                                     <div
                                         onClick={() => openPassport(item.partners[0])}
-                                        style={{ width: '45px', height: '45px', borderRadius: '15px', border: '2px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer' }}
+                                        style={{ width: '60px', height: '60px', borderRadius: '20px', border: '2px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer', background: 'rgba(0,0,0,0.5)', padding: '1.5px', boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)' }}
                                     >
-                                        <img src={item.avatar_a || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.partners[0]}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar A" />
+                                        <img src={item.avatar_a} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px' }} alt="Avatar A" />
                                     </div>
                                     <div
                                         onClick={() => openPassport(item.partners[1])}
-                                        style={{ width: '45px', height: '45px', borderRadius: '15px', border: '2px solid var(--accent-neon)', overflow: 'hidden', cursor: 'pointer' }}
+                                        style={{ width: '60px', height: '60px', borderRadius: '20px', border: '2px solid var(--accent-hot)', overflow: 'hidden', cursor: 'pointer', background: 'rgba(0,0,0,0.5)', padding: '1.5px', boxShadow: '0 0 15px rgba(255, 45, 85, 0.2)' }}
                                     >
-                                        <img src={item.avatar_b || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.partners[1]}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar B" />
+                                        <img src={item.avatar_b} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px' }} alt="Avatar B" />
                                     </div>
                                 </div>
                                 <div style={{ textAlign: 'right' }}>
-                                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
-                                        <span onClick={() => openPassport(item.partners[0])} style={{ cursor: 'pointer', color: 'var(--accent-neon)' }}>@{item.partners[0]}</span> +
-                                        <span onClick={() => openPassport(item.partners[1])} style={{ cursor: 'pointer', color: 'var(--accent-neon)' }}> @{item.partners[1]}</span>
-                                    </div>
-                                    <div style={{ fontSize: '0.6rem', opacity: 0.5, textTransform: 'uppercase' }}>{item.date}</div>
+                                    <span style={{ fontSize: '0.6rem', fontWeight: '900', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block' }}>Wedding Date</span>
+                                    <span style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--accent-neon)' }}>{item.date}</span>
                                 </div>
                             </div>
 
-                            <div style={{
-                                background: 'rgba(255,255,255,0.03)',
-                                borderRadius: '12px',
-                                padding: '8px 12px',
-                                fontSize: '0.8rem',
-                                textAlign: 'center',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px'
-                            }}>
-                                <Globe size={14} opacity={0.5} />
-                                <span>Стиль: <b>{item.style}</b></span>
+                            <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{ padding: '8px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', color: 'var(--accent-hot)' }}>
+                                    <Heart size={20} fill="currentColor" />
+                                </div>
+                                <div>
+                                    <h3 style={{ fontSize: '1.2rem', fontWeight: '900', letterSpacing: '-0.02em', color: 'white' }}>
+                                        @{item.partners[0]} <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: '400', fontSize: '0.9rem' }}>&</span> @{item.partners[1]}
+                                    </h3>
+                                    <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: '600' }}>
+                                        Стиль союза: <span style={{ color: 'white' }}>{item.style}</span>
+                                    </p>
+                                </div>
                             </div>
                         </motion.div>
                     ))}

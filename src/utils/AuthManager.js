@@ -28,7 +28,7 @@ export const performFileAuth = async (handle) => {
         const { data: dbUser } = await supabase
             .from('profiles')
             .select('*')
-            .eq('handle', username)
+            .ilike('handle', username)
             .maybeSingle();
 
         // Если в базе есть профиль и у него есть аватарка (которую мы сохранили как оригинал)
