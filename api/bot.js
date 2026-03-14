@@ -14,6 +14,8 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).end();
 
     const body = req.body;
+    console.log('[Bot Webhook] Incoming:', JSON.stringify(body));
+
     if (!body.message) return res.status(200).end();
 
     const chatId = body.message.chat.id;
@@ -48,13 +50,19 @@ export default async function handler(req, res) {
 }
 
 async function sendMsg(chatId, text) {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: chatId,
-            text: text,
-            parse_mode: 'HTML'
-        })
-    });
+    try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: text,
+                parse_mode: 'HTML'
+            })
+        });
+        const data = await res.json();
+        if (!data.ok) console.error('[TG API] Error:', data);
+    } catch (err) {
+        console.error('[TG Fetch] Error:', err);
+    }
 }
