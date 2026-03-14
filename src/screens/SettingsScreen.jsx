@@ -105,7 +105,7 @@ const SettingsScreen = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             className="screen"
-            style={{ padding: '0 1.5rem', paddingBottom: '7rem' }}
+            style={{ paddingTop: '85px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingTop: '1rem' }}>
                 <motion.button

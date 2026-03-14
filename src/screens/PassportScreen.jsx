@@ -13,6 +13,7 @@ const PassportScreen = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             className="screen passport"
+            style={{ paddingTop: '85px', paddingBottom: '7rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
         >
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
                 <button onClick={() => setCurrentScreen('dashboard')} style={{ background: 'none', border: 'none', color: 'white' }}>

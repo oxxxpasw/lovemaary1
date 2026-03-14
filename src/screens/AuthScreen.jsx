@@ -32,7 +32,7 @@ const AuthScreen = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             className="screen auth-screen"
-            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            style={{ paddingTop: '85px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
         >
             <div className="glass-panel card" style={{ padding: '2.5rem' }}>
                 <h2 style={{ marginBottom: '0.5rem' }}>Вход через <span className="text-gradient">Threads</span></h2>

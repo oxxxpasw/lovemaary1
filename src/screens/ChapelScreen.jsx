@@ -19,6 +19,7 @@ const ChapelScreen = () => {
             exit={{ opacity: 0 }}
             className="screen chapel"
             style={{
+                paddingTop: '85px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
