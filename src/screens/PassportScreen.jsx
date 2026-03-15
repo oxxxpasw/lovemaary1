@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Share2, ArrowLeft, Heart, Sparkles, XOctagon, History as HistoryIcon, Search, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Share2, ArrowLeft, Heart, Sparkles, XOctagon, History as HistoryIcon, Search, ShieldAlert, ShieldCheck, Loader2, Ghost } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 
 const PassportScreen = () => {
-    const { user, marriages: myMarriages, divorce, viewingHandle, setViewingHandle, openPassport, setCurrentScreen, ensureSafeAvatar } = useApp();
+    const { user, marriages: myMarriages, divorce, viewingHandle, setViewingHandle, openPassport, setCurrentScreen, ensureSafeAvatar, getPet, adoptPet, feedPet } = useApp();
     const [viewedUser, setViewedUser] = useState(null);
     const [viewedMarriages, setViewedMarriages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Pet State
+    const [pet, setPet] = useState(null);
+    const [loadingPet, setLoadingPet] = useState(true);
+    const [isAdopting, setIsAdopting] = useState(false);
+    const [isFeeding, setIsFeeding] = useState(false);
 
     const isOwnPassport = !viewingHandle || viewingHandle === user?.handle;
 
@@ -25,6 +31,52 @@ const PassportScreen = () => {
             setViewedMarriages(myMarriages);
         }
     }, [viewingHandle, user, myMarriages, isOwnPassport]); // Added dependencies
+
+    useEffect(() => {
+        const fetchPet = async () => {
+            if (viewedMarriages.length > 0) {
+                setLoadingPet(true);
+                // Загружаем питомца для первого брака в списке
+                const data = await getPet(viewedMarriages[0].id);
+                setPet(data);
+                setLoadingPet(false);
+            } else {
+                setPet(null);
+                setLoadingPet(false);
+            }
+        };
+        fetchPet();
+    }, [viewedMarriages, getPet]);
+
+    const handleAdoptPet = async () => {
+        if (viewedMarriages.length === 0) return;
+        setIsAdopting(true);
+        const names = ['Нэо', 'Кибер', 'Спарк', 'Глюк', 'Пиксель', 'Зиро'];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const result = await adoptPet(viewedMarriages[0].id, randomName);
+        if (result.success) {
+            setPet(result.pet);
+        } else {
+            alert(result.error || 'Ошибка при создании питомца.');
+        }
+        setIsAdopting(false);
+    };
+
+    const handleFeedPet = async () => {
+        if (!pet) return;
+        setIsFeeding(true);
+        const result = await feedPet(pet.id, 20); // Стоит 20 Silk
+        if (result.success) {
+            setPet(prev => ({ ...prev, happiness: result.newHappiness, health: result.newHealth }));
+            // Also deduct local silk just for UI snappiness if own passport
+            if (isOwnPassport) {
+                // The context handles deducting user silk internally
+            }
+        } else {
+            alert(result.error || 'Ошибка');
+        }
+        setIsFeeding(false);
+    };
 
     const loadOtherUserData = async (handle) => {
         setIsLoading(true);
@@ -250,6 +302,71 @@ const PassportScreen = () => {
                             </div>
                         </div>
                     </motion.div>
+
+                    {/* TAMAGOTCHI PET INTEGRATION */}
+                    {viewedMarriages.length > 0 && isOwnPassport && (
+                        <div style={{ width: '100%', marginBottom: '2.5rem', zIndex: 2 }}>
+                            {!loadingPet && (
+                                pet ? (
+                                    <div className="glass-panel" style={{ border: '1px solid rgba(255,45,85,0.2)', padding: '20px', textAlign: 'center', boxShadow: '0 10px 20px rgba(255,45,85,0.05)' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '15px' }}>
+                                            <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,45,85,0.1)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', color: 'var(--accent-hot)' }}>
+                                                <Ghost size={24} />
+                                            </div>
+                                            <div style={{ textAlign: 'left' }}>
+                                                <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: '800' }}>КИБЕР-ПИТОМЕЦ</div>
+                                                <div style={{ fontSize: '1.2rem', color: 'white', fontWeight: '900', letterSpacing: '-0.02em' }}>{pet.name}</div>
+                                            </div>
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '20px' }}>
+                                            <div style={{ flex: 1, background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '14px' }}>
+                                                <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '800' }}>Счастье</div>
+                                                <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                                                    <div style={{ width: `${pet.happiness}%`, height: '100%', background: pet.happiness > 50 ? 'var(--accent-neon)' : 'var(--accent-hot)', transition: 'width 0.5s', boxShadow: '0 0 10px var(--accent-neon)' }} />
+                                                </div>
+                                                <div style={{ fontSize: '0.7rem', color: 'white', marginTop: '6px', fontWeight: 'bold' }}>{pet.happiness}%</div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={handleFeedPet}
+                                            disabled={isFeeding}
+                                            style={{
+                                                width: '100%', padding: '14px', borderRadius: '16px',
+                                                background: 'var(--accent-hot)', color: 'white', border: 'none',
+                                                fontSize: '0.9rem', fontWeight: '800', cursor: 'pointer',
+                                                boxShadow: '0 5px 15px rgba(255,45,85,0.3)'
+                                            }}
+                                        >
+                                            {isFeeding ? <Loader2 size={18} className="animate-spin" style={{ margin: '0 auto' }} /> : 'ПОКОРМИТЬ (-20 Silk)'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={handleAdoptPet}
+                                        disabled={isAdopting}
+                                        style={{
+                                            width: '100%', padding: '20px', borderRadius: '24px',
+                                            background: 'rgba(255,255,255,0.02)', border: '1.5px dashed rgba(255,45,85,0.3)',
+                                            color: 'var(--accent-hot)', fontSize: '0.95rem', fontWeight: '800', cursor: 'pointer',
+                                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '12px',
+                                            boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                                        }}
+                                    >
+                                        {isAdopting ? <Loader2 size={24} className="animate-spin" /> : (
+                                            <>
+                                                <div style={{ width: '50px', height: '50px', borderRadius: '16px', background: 'rgba(255,45,85,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <Ghost size={24} />
+                                                </div>
+                                                ЗАВЕСТИ СЕМЕЙНОГО ПИТОМЦА
+                                            </>
+                                        )}
+                                    </button>
+                                )
+                            )}
+                        </div>
+                    )}
 
                     {/* Anniversary Log - Premium History Feed */}
                     <div style={{ position: 'relative' }}>
