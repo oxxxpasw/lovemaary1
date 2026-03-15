@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, User, BarChart3, Settings, Loader2, Sparkles, X } from 'lucide-react';
+import { Heart, User, BarChart3, Settings, Loader2, Sparkles, X, Gift, Flame } from 'lucide-react';
 import { performFileAuth } from '../utils/AuthManager';
 
 const Dashboard = () => {
     const {
         user, setUser, setCurrentScreen,
         sendProposal, receivedProposals, acceptProposal, rejectProposal,
-        sentProposals, updateUser, logout, ensureSafeAvatar
+        sentProposals, updateUser, logout, ensureSafeAvatar,
+        claimDailyReward
     } = useApp();
     const [showProposalModal, setShowProposalModal] = useState(false);
     const [partnerHandle, setPartnerHandle] = useState('');
@@ -16,6 +17,45 @@ const Dashboard = () => {
     const [showSentSuccess, setShowSentSuccess] = useState(false);
     const [selectedRing, setSelectedRing] = useState('basic');
     const [proposalError, setProposalError] = useState('');
+
+    // Daily Reward State
+    const [showDailyModal, setShowDailyModal] = useState(false);
+    const [claimingDaily, setClaimingDaily] = useState(false);
+    const [dailyRewardResult, setDailyRewardResult] = useState(null);
+    const [claimError, setClaimError] = useState(null);
+
+    useEffect(() => {
+        // Check if daily reward is available
+        if (user && user.last_daily_claim) {
+            const today = new Date();
+            const lastClaim = new Date(user.last_daily_claim);
+            const diffTime = Math.abs(today - lastClaim);
+            const diffHours = diffTime / (1000 * 60 * 60);
+
+            if (diffHours >= 24) {
+                setShowDailyModal(true);
+            }
+        } else if (user && !user.last_daily_claim) {
+            // Never claimed before
+            setShowDailyModal(true);
+        }
+    }, [user]);
+
+    const handleClaimDaily = async () => {
+        setClaimingDaily(true);
+        setClaimError(null);
+        const result = await claimDailyReward();
+        setClaimingDaily(false);
+        if (result.success) {
+            setDailyRewardResult(result);
+            setTimeout(() => {
+                setShowDailyModal(false);
+                setDailyRewardResult(null);
+            }, 3000);
+        } else {
+            setShowDailyModal(false);
+        }
+    };
 
     const ringOptions = [
         { id: 'basic', name: 'Базовое', price: 0, color: '#fff' },
@@ -44,21 +84,97 @@ const Dashboard = () => {
                         @{user.handle}
                     </h1>
                 </div>
-                <motion.div
-                    whileTap={{ scale: 0.95 }}
-                    style={{
-                        position: 'relative', flexShrink: 0,
-                        padding: '3px',
-                        background: 'linear-gradient(135deg, var(--accent-neon), var(--accent-hot))',
-                        borderRadius: '20px',
-                        boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)'
-                    }}
-                >
-                    <div style={{ width: '56px', height: '56px', borderRadius: '17px', overflow: 'hidden', background: '#000', padding: '1px' }}>
-                        <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Баланс</div>
+                        <div style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--accent-neon)' }}>{user.silk || 0} S</div>
                     </div>
-                </motion.div>
+                    <motion.div
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            position: 'relative', flexShrink: 0,
+                            padding: '3px',
+                            background: 'linear-gradient(135deg, var(--accent-neon), var(--accent-hot))',
+                            borderRadius: '20px',
+                            boxShadow: '0 0 20px rgba(0, 242, 255, 0.3)'
+                        }}
+                    >
+                        <div style={{ width: '56px', height: '56px', borderRadius: '17px', overflow: 'hidden', background: '#000', padding: '1px' }}>
+                            <img src={ensureSafeAvatar(user.avatar)} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+                        </div>
+                    </motion.div>
+                </div>
             </div>
+
+            {/* Daily Reward Modal */}
+            <AnimatePresence>
+                {showDailyModal && (
+                    <div style={{
+                        position: 'fixed', inset: 0,
+                        background: 'rgba(5, 5, 8, 0.92)', backdropFilter: 'blur(20px)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        zIndex: 2000, padding: '2rem'
+                    }}>
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            className="cyber-card"
+                            style={{ width: '100%', maxWidth: '350px', padding: '2.5rem 2rem', textAlign: 'center' }}
+                        >
+                            {!dailyRewardResult ? (
+                                <>
+                                    <motion.div
+                                        animate={{ y: [0, -10, 0], filter: ['hue-rotate(0deg)', 'hue-rotate(90deg)', 'hue-rotate(0deg)'] }}
+                                        transition={{ duration: 3, repeat: Infinity }}
+                                        style={{ width: '80px', height: '80px', margin: '0 auto 1.5rem', background: 'rgba(0,242,255,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px rgba(0,242,255,0.3)' }}
+                                    >
+                                        <Gift size={40} color="var(--accent-neon)" />
+                                    </motion.div>
+                                    <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '0.5rem', color: 'white' }}>Ежедневный Буст</h2>
+                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Ты зашел в систему. Забери свою награду Silk.</p>
+
+                                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '2rem' }}>
+                                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 15px', borderRadius: '12px' }}>
+                                            <Flame size={16} color="var(--accent-hot)" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '5px' }} />
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Стрик: </span>
+                                            <span style={{ fontWeight: 'bold' }}>{user.streak_days || 0} дней</span>
+                                        </div>
+                                    </div>
+
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        className="btn-primary"
+                                        style={{ width: '100%', height: '56px', borderRadius: '18px', fontSize: '1.1rem' }}
+                                        onClick={handleClaimDaily}
+                                        disabled={claimingDaily}
+                                    >
+                                        {claimingDaily ? <Loader2 className="animate-spin" size={24} style={{ margin: '0 auto' }} /> : 'ЗАБРАТЬ SILK'}
+                                    </motion.button>
+
+                                    {claimError && (
+                                        <p style={{ color: '#ff2d55', fontSize: '0.8rem', marginTop: '1rem' }}>{claimError}</p>
+                                    )}
+
+                                    <button
+                                        onClick={() => setShowDailyModal(false)}
+                                        style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.4)', marginTop: '1rem', fontSize: '0.8rem', cursor: 'pointer' }}
+                                    >
+                                        Скрыть
+                                    </button>
+                                </>
+                            ) : (
+                                <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                                    <Sparkles size={60} color="var(--accent-neon)" style={{ margin: '0 auto 1rem' }} />
+                                    <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--accent-neon)', marginBottom: '0.5rem' }}>+{dailyRewardResult.reward}</h2>
+                                    <p style={{ color: 'white', fontWeight: '600', fontSize: '1.1rem' }}>Silk зачислено!</p>
+                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '1rem' }}>Возвращайся завтра за новым бонусом.</p>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Futuristic Central Hub */}
             <motion.div
@@ -132,8 +248,6 @@ const Dashboard = () => {
                     ))}
                 </div>
             </div>
-
-
 
             {/* Actions Grid - Refined */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '3rem' }}>

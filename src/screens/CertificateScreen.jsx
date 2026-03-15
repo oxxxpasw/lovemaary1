@@ -1,17 +1,63 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
-import { Heart, Sparkles, Download, Loader2, ShieldCheck, ChevronLeft, Check } from 'lucide-react';
+import { Heart, Sparkles, Download, Loader2, ShieldCheck, ChevronLeft, Check, Ghost } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import download from 'downloadjs';
 
 const CertificateScreen = () => {
-    const { user, activeWedding, setCurrentScreen, marriages, ensureSafeAvatar } = useApp();
+    const { user, activeWedding, setCurrentScreen, marriages, ensureSafeAvatar, getPet, adoptPet, feedPet } = useApp();
     const certificateRef = useRef(null);
     const [isExporting, setIsExporting] = useState(false);
     const [isShared, setIsShared] = useState(false);
 
+    // Pet State
+    const [pet, setPet] = useState(null);
+    const [loadingPet, setLoadingPet] = useState(true);
+    const [isAdopting, setIsAdopting] = useState(false);
+    const [isFeeding, setIsFeeding] = useState(false);
+
     const weddingData = activeWedding || (marriages.length > 0 ? marriages[0] : null);
+
+    useEffect(() => {
+        const fetchPet = async () => {
+            if (weddingData && weddingData.id) {
+                setLoadingPet(true);
+                const data = await getPet(weddingData.id);
+                setPet(data);
+                setLoadingPet(false);
+            } else {
+                setLoadingPet(false);
+            }
+        };
+        fetchPet();
+    }, [weddingData, getPet]);
+
+    const handleAdoptPet = async () => {
+        if (!weddingData?.id) return;
+        setIsAdopting(true);
+        const names = ['Нэо', 'Кибер', 'Спарк', 'Глюк', 'Пиксель', 'Зиро'];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const result = await adoptPet(weddingData.id, randomName);
+        if (result.success) {
+            setPet(result.pet);
+        } else {
+            alert(result.error || 'Ошибка при создании питомца. Проверьте базу данных.');
+        }
+        setIsAdopting(false);
+    };
+
+    const handleFeedPet = async () => {
+        if (!pet) return;
+        setIsFeeding(true);
+        const result = await feedPet(pet.id, 20); // Стоит 20 Silk
+        if (result.success) {
+            setPet(prev => ({ ...prev, happiness: result.newHappiness, health: result.newHealth }));
+        } else {
+            alert(result.error || 'Ошибка');
+        }
+        setIsFeeding(false);
+    };
 
     const proxyImage = (url) => {
         if (!url) return `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`;
@@ -38,6 +84,8 @@ const CertificateScreen = () => {
                         el.style.padding = '5rem 4rem';
                         el.style.borderRadius = '60px';
                     }
+                    const hideOnExport = clonedDoc.querySelectorAll('.hide-on-export');
+                    hideOnExport.forEach(n => n.style.display = 'none');
                 }
             });
 
@@ -183,7 +231,8 @@ const CertificateScreen = () => {
                             borderBottom: '1px solid rgba(255,255,255,0.06)',
                             display: 'flex',
                             justifyContent: 'space-around',
-                            gap: '20px'
+                            gap: '20px',
+                            marginBottom: '10px'
                         }}>
                             <div style={{ textAlign: 'center' }}>
                                 <div style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', marginBottom: '4px' }}>Date</div>
@@ -196,7 +245,57 @@ const CertificateScreen = () => {
                         </div>
                     </div>
 
-                    <div style={{ position: 'absolute', bottom: '15px', fontSize: '0.5rem', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', zIndex: 2 }}>
+                    {/* TAMAGOTCHI PET INTEGRATION */}
+                    <div style={{ width: '100%', marginTop: '1rem', zIndex: 2 }}>
+                        {!loadingPet && (
+                            pet ? (
+                                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,45,85,0.2)', borderRadius: '24px', padding: '15px', textAlign: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '10px' }}>
+                                        <Ghost size={16} color="var(--accent-hot)" />
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--accent-hot)', textTransform: 'uppercase', fontWeight: 'bold' }}>СЕМЕЙНЫЙ ПИТОМЕЦ: {pet.name}</span>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '15px' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Счастье</div>
+                                            <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <div style={{ width: `${pet.happiness}%`, height: '100%', background: pet.happiness > 50 ? 'var(--accent-neon)' : 'var(--accent-hot)' }} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        className="hide-on-export"
+                                        onClick={handleFeedPet}
+                                        disabled={isFeeding}
+                                        style={{
+                                            width: '100%', padding: '8px', borderRadius: '12px',
+                                            background: 'var(--accent-hot)', color: 'white', border: 'none',
+                                            fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer'
+                                        }}
+                                    >
+                                        {isFeeding ? <Loader2 size={14} className="animate-spin" style={{ margin: '0 auto' }} /> : 'ПОКОРМИТЬ (-20 Silk)'}
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    className="hide-on-export"
+                                    onClick={handleAdoptPet}
+                                    disabled={isAdopting}
+                                    style={{
+                                        width: '100%', padding: '15px', borderRadius: '24px',
+                                        background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.2)',
+                                        color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', cursor: 'pointer',
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
+                                    }}
+                                >
+                                    {isAdopting ? <Loader2 size={16} className="animate-spin" /> : <><Ghost size={16} /> ЗАВЕСТИ КИБЕР-ПИТОМЦА</>}
+                                </button>
+                            )
+                        )}
+                    </div>
+
+                    <div style={{ position: 'absolute', bottom: '10px', fontSize: '0.45rem', color: 'rgba(255,255,255,0.15)', letterSpacing: '0.2em', zIndex: 2 }}>
                         MARRYTHREADS.APP
                     </div>
                 </div>

@@ -13,7 +13,9 @@ import { Heart, User, BarChart3, Settings, Globe } from 'lucide-react';
 import SettingsScreen from './screens/SettingsScreen';
 import FeedScreen from './screens/FeedScreen';
 import DivorceScreen from './screens/DivorceScreen';
+import GamesScreen from './screens/GamesScreen';
 import { motion } from 'framer-motion';
+import { Joystick } from 'lucide-react';
 
 const NavIcon = ({ currentScreen, setCurrentScreen, screen, Icon }) => {
   const isActive = currentScreen === screen;
@@ -135,6 +137,7 @@ function AppContent() {
         {currentScreen === 'settings' && <SettingsScreen key="settings" />}
         {currentScreen === 'certificate' && <CertificateScreen key="certificate" />}
         {currentScreen === 'divorce' && <DivorceScreen key="divorce" />}
+        {currentScreen === 'games' && <GamesScreen key="games" />}
       </AnimatePresence>
 
       {showNavbar && (
@@ -148,6 +151,7 @@ function AppContent() {
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="ships" Icon={BarChart3} />
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="passport" Icon={User} />
           <div style={{ width: '1px', height: '32px', background: 'rgba(255,255,255,0.1)', margin: '0 4px' }} />
+          <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="games" Icon={Joystick} />
           <NavIcon currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} screen="settings" Icon={Settings} />
         </motion.div>
       )}

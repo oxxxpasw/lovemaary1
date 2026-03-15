@@ -88,12 +88,68 @@ export const AppProvider = ({ children }) => {
                 avatar: ensureSafeAvatar(data.avatar_url),
                 silk: data.silk,
                 role: data.role,
-                status: data.status
+                status: data.status,
+                last_daily_claim: data.last_daily_claim,
+                streak_days: data.streak_days || 0
             });
             setCurrentScreen('dashboard');
         } else {
             setCurrentScreen('auth');
         }
+    };
+
+    const claimDailyReward = async () => {
+        if (!user) return { success: false, error: 'Not logged in' };
+
+        const today = new Date();
+        const lastClaim = user.last_daily_claim ? new Date(user.last_daily_claim) : null;
+
+        let newStreak = user.streak_days || 0;
+        let bonusSilk = 50;
+
+        // Расчет стрика: если забирал вчера, стрик растет. Если позавчера - сбрасывается.
+        if (lastClaim) {
+            const diffTime = Math.abs(today - lastClaim);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 2) { // Забирал вчера
+                newStreak += 1;
+            } else { // Пропустил день
+                newStreak = 1;
+            }
+        } else {
+            newStreak = 1;
+        }
+
+        // Бонус за стрик
+        if (newStreak % 3 === 0) bonusSilk = 100;
+        if (newStreak % 7 === 0) bonusSilk = 300;
+
+        const newSilk = (user.silk || 0) + bonusSilk;
+        const nowStr = today.toISOString();
+
+        const { error } = await supabase
+            .from('profiles')
+            .update({
+                silk: newSilk,
+                last_daily_claim: nowStr,
+                streak_days: newStreak
+            })
+            .ilike('handle', user.handle);
+
+        if (error) {
+            console.error('Failed to claim daily:', error);
+            return { success: false, error: error.message };
+        }
+
+        setUser(prev => ({
+            ...prev,
+            silk: newSilk,
+            last_daily_claim: nowStr,
+            streak_days: newStreak
+        }));
+
+        return { success: true, reward: bonusSilk, streak: newStreak };
     };
 
     // 2. Real-time подписка на входящие предложения
@@ -255,7 +311,9 @@ export const AppProvider = ({ children }) => {
                 avatar: ensureSafeAvatar(data.avatar_url),
                 silk: data.silk,
                 role: data.role,
-                status: data.status
+                status: data.status,
+                last_daily_claim: data.last_daily_claim,
+                streak_days: data.streak_days || 0
             });
         }
         setCurrentScreen('dashboard');
@@ -560,6 +618,41 @@ export const AppProvider = ({ children }) => {
         }
     }, [user]);
 
+    // 6. Pets Management
+    const getPet = async (marriageId) => {
+        const { data } = await supabase.from('pets').select('*').eq('marriage_id', marriageId).maybeSingle();
+        return data || null;
+    };
+
+    const adoptPet = async (marriageId, petName) => {
+        const { data, error } = await supabase.from('pets').insert({
+            marriage_id: marriageId,
+            name: petName
+        }).select().maybeSingle();
+
+        if (error) return { success: false, error: 'Ошибка питомца' };
+        return { success: true, pet: data };
+    };
+
+    const feedPet = async (petId, cost = 20) => {
+        if (!user || user.silk < cost) return { success: false, error: 'Недостаточно Silk' };
+
+        const { data: pet } = await supabase.from('pets').select('happiness, health').eq('id', petId).maybeSingle();
+        if (!pet) return { success: false, error: 'Питомец не найден' };
+
+        const newHappiness = Math.min(100, pet.happiness + 30);
+        const newHealth = Math.min(100, pet.health + 10);
+
+        await supabase.from('pets').update({
+            happiness: newHappiness,
+            health: newHealth,
+            last_fed_at: new Date().toISOString()
+        }).eq('id', petId);
+
+        await updateUser({ silk: user.silk - cost });
+        return { success: true, newHappiness, newHealth };
+    };
+
     return (
         <AppContext.Provider value={{
             user, setUser,
@@ -571,7 +664,8 @@ export const AppProvider = ({ children }) => {
             sendProposal, acceptProposal, rejectProposal,
             login, updateUser, logout, divorce,
             viewingHandle, setViewingHandle, openPassport, boostHype,
-            ensureSafeAvatar
+            ensureSafeAvatar,
+            claimDailyReward, getPet, adoptPet, feedPet
         }}>
             {children}
         </AppContext.Provider>
